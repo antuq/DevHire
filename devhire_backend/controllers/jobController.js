@@ -1,0 +1,191 @@
+const mongoose = require("mongoose");
+const Job = require("../models/Job");
+
+// =======================
+//  CREATE JOB
+// =======================
+const createJob = async (req, res) => {
+    try {
+        const job = new Job(req.body);
+        await job.save();
+
+        res.status(201).json({
+            message: "Job created successfully!",
+            job
+        });
+
+    } catch (err) {
+        console.log("Error storing data:", err.message);
+        res.status(500).json({ message: "Error creating job" });
+    }
+};
+
+
+// ==============================================
+//  READ ALL JOBS || SEARCH + FILTER + PAGINATION
+// ==============================================
+const getJobs = async (req, res) => {
+    try {
+        let { status, company, role, location, sort, page, limit } = req.query;
+
+        // trim inputs
+        status = status?.trim();
+        company = company?.trim();
+        role = role?.trim();
+        location = location?.trim();
+
+        // pagination setup
+        page = parseInt(page) || 1;
+        limit = parseInt(limit) || 5;
+        const skip = (page - 1) * limit;
+
+        let filter = {};
+
+        // exact filter
+        if (status) filter.status = status;
+
+        // search (partial + case insensitive)
+        if (company) {
+            filter.company = { $regex: company, $options: "i" };
+        }
+
+        if (role) {
+            filter.role = { $regex: role, $options: "i" };
+        }
+
+        if (location) {
+            filter.location = { $regex: location, $options: "i" };
+        }
+
+        // query
+        let query = Job.find(filter);
+
+        // sorting
+        if (sort) {
+            query = query.sort(sort);
+        } else {
+            query = query.sort("-createdAt");
+        }
+
+        // total count
+        const totalJobs = await Job.countDocuments(filter);
+        const totalPages = Math.ceil(totalJobs / limit);
+
+        // pagination
+        query = query.skip(skip).limit(limit);
+        const jobs = await query;
+
+        // response
+        res.status(200).json({
+            totalJobs,
+            currentPage: page,
+            totalPages,
+            jobs
+        });
+
+    } catch (err) {
+        console.log("Error reading data:", err.message);
+        res.status(500).json({ message: "Error fetching jobs" });
+    }
+};
+
+// =======================
+//  GET JOB BY ID
+// =======================
+const getJobById = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid ID" });
+        }
+
+        const job = await Job.findById(id);
+
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        res.status(200).json(job);
+
+    } catch (err) {
+        console.log("Error reading data:", err.message);
+        res.status(500).json({ message: "Error fetching job" });
+    }
+};
+
+
+// =======================
+//  UPDATE JOB
+// =======================
+const updateJob = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid ID" });
+        }
+
+        const updatedJob = await Job.findByIdAndUpdate(
+            id,
+            req.body,
+            { returnDocument: "after",
+              runValidators:"true"
+             }
+        );
+
+        if (!updatedJob) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        res.status(200).json({
+            message: "Job updated successfully!",
+            updatedJob
+        });
+
+    } catch (err) {
+        console.log("Error updating data:", err.message);
+        res.status(500).json({ message: "Error updating job" });
+    }
+};
+
+// =======================
+//  DELETE JOB
+// =======================
+const deleteJob = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid ID" });
+        }
+
+        const deletedJob = await Job.findByIdAndDelete(id);
+
+        if (!deletedJob) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        res.status(200).json({
+            message: "Job deleted successfully!"
+        });
+
+    } catch (err) {
+        console.log("Error deleting data:", err.message);
+        res.status(500).json({ message: "Error deleting job" });
+    }
+};
+
+// =======================
+//  EXPORT CONTROLLERS
+// =======================
+module.exports = {
+    createJob,
+    getJobs,
+    getJobById,
+    updateJob,
+    deleteJob
+};
