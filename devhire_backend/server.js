@@ -1,10 +1,10 @@
 // Load environment variables
 require("dotenv").config();
-require("./models/Job");
 
 // Import dependencies
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 // Initialize app
 const app = express();
@@ -12,6 +12,8 @@ const app = express();
 // Middleware to parse JSON
 app.use(express.json());
 
+// Middleware to allow access allow control origin. 
+app.use(cors());
 
 // =======================
 // DATABASE CONNECTION
