@@ -16,6 +16,7 @@ const jobSchema = new mongoose.Schema({
     link:{
         type: String,
         trim: true,
+        default: ""
     },
     status:{
         type: String,
@@ -24,15 +25,18 @@ const jobSchema = new mongoose.Schema({
     },
     salary:{
         type: String,
-        trim: true
+        trim: true,
+        default:""
     },
     location:{
         type: String,
-        trim: true
+        trim: true,
+        default: ""
     },
     notes:{
         type: String,
         trim: true,
+        default: ""
     },
     createdAt:{
         type: Date,

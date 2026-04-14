@@ -3,8 +3,17 @@ import './App.css'
 import API from './services/api'
 
 function App() {
-
+  // to fetch jobs from api
   const [jobs, setJobs] = useState([]);
+
+  // to fetch and handle form data from add Job
+  const [formData, setFormData] = useState({
+    company: "",
+    role: "",
+    status: "",
+    location: "",
+    salary: ""
+  });
 
   const fetchJobs = async () => {
     try {
@@ -31,6 +40,32 @@ function App() {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await API.post("/jobs", formData);
+      console.log("Job added", res.data);
+      fetchJobs(); // refresh ui after job addition
+      setFormData({
+        company: "",
+        role: "",
+        status: "",
+        location: "",
+        salary: ""
+      });
+    } catch (err) {
+      console.log("error occured: ", err.message);
+    }
+  }
+
   useEffect(() => {
     fetchJobs();
   }, []);
@@ -43,9 +78,46 @@ function App() {
         DevHire Dashboard
       </h1>
 
+      {/* Add Job Form UI */}
+      <div className="max-w-2xl mx-auto">
+        <form onSubmit={handleSubmit} className="mb-8 bg-white p-5 rounded-xl shadow-md">
+          <h2 className="text-lg font-semibold mb-3">Add Job</h2>
+
+          <input name="company"
+            placeholder="Company*"
+            value={formData.company}
+            onChange={handleChange}
+            className="border w-full p-2 mr-2 mb-2" />
+          <input name="role"
+            placeholder="Role*"
+            value={formData.role}
+            onChange={handleChange}
+            className="border w-full p-2 mr-2 mb-2" />
+          <input name="status"
+            placeholder="Status"
+            value={formData.status}
+            onChange={handleChange}
+            className="border w-full p-2 mr-2 mb-2" />
+          <input name="location"
+            placeholder="Location"
+            value={formData.location}
+            onChange={handleChange}
+            className="border w-full p-2 mr-2 mb-2" />
+          <input name="salary"
+            placeholder="Salary"
+            value={formData.salary}
+            onChange={handleChange}
+            className="border w-full p-2 mr-2 mb-2" />
+
+          <button type='submit' className="bg-blue-500 text-white px-4 py-2 rounded">
+            Add Job
+          </button>
+        </form>
+      </div>
+
       {/* Grid */}
-      <div className="max-w-6xl mx-auto">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {jobs.map((job) => (
             <div
               key={job._id}
