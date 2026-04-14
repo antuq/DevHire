@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import API from './services/api'
+import toast, { Toaster } from "react-hot-toast"
 
 function App() {
   // to fetch jobs from api
@@ -54,6 +55,7 @@ function App() {
       const res = await API.post("/jobs", formData);
       console.log("Job added", res.data);
       fetchJobs(); // refresh ui after job addition
+      toast.success("Job Added Successfully!")
       setFormData({
         company: "",
         role: "",
@@ -72,7 +74,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-blue-100 to-indigo-200">
-
+      <Toaster position='top-right'></Toaster>
       {/* Header */}
       <h1 className="text-4xl font-bold text-center mb-10 text-gray-800 tracking-tight">
         DevHire Dashboard
@@ -121,7 +123,7 @@ function App() {
           {jobs.map((job) => (
             <div
               key={job._id}
-              className="bg-white p-5 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition duration-300 border border-gray-100"
+              className="bg-white p-5 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition duration-300 border border-gray-100 animate-fadeIn"
             >
               {/* Top Section */}
               <div className="flex justify-between items-start">
