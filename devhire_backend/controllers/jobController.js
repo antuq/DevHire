@@ -26,13 +26,19 @@ const createJob = async (req, res) => {
 // ==============================================
 const getJobs = async (req, res) => {
     try {
-        let { status, company, role, location, sort, page, limit } = req.query;
+        // commenting out for testing purpose 
+        // let { status, company, role, location, sort, page, limit } = req.query;
+
+        // search parameter will be helpful to use the OR query operator to look for company, location and role from a single input easing the use of input fields for user.
+        // this simplifies the search operation for the user as the user can directly enter names such as google frontend etc together and the $or query can find the terms in the db.
+        let { status, search, sort, page, limit } = req.query;
 
         // trim inputs
         status = status?.trim();
-        company = company?.trim();
-        role = role?.trim();
-        location = location?.trim();
+        // company = company?.trim();
+        // role = role?.trim();
+        // location = location?.trim();
+        search = search?.trim();
 
         // pagination setup
         page = parseInt(page) || 1;
@@ -45,16 +51,24 @@ const getJobs = async (req, res) => {
         if (status) filter.status = status;
 
         // search (partial + case insensitive)
-        if (company) {
-            filter.company = { $regex: company, $options: "i" };
-        }
+        // if (company) {
+        //     filter.company = { $regex: company, $options: "i" };
+        // }
 
-        if (role) {
-            filter.role = { $regex: role, $options: "i" };
-        }
+        // if (role) {
+        //     filter.role = { $regex: role, $options: "i" };
+        // }
 
-        if (location) {
-            filter.location = { $regex: location, $options: "i" };
+        // if (location) {
+        //     filter.location = { $regex: location, $options: "i" };
+        // }
+
+        if (search) {
+            filter.$or = [
+                { company: { $regex: search, $options: 'i' } },
+                { role: { $regex: search, $options: 'i' } },
+                { location: { $regex: search, $options: "i" } }
+            ]
         }
 
         // query
@@ -131,9 +145,10 @@ const updateJob = async (req, res) => {
         const updatedJob = await Job.findByIdAndUpdate(
             id,
             req.body,
-            { returnDocument: "after",
-              runValidators:"true"
-             }
+            {
+                returnDocument: "after",
+                runValidators: "true"
+            }
         );
 
         if (!updatedJob) {
