@@ -24,6 +24,12 @@ function App() {
   const [sort, setSort] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 6;
+
+  const [editId, setEditId] = useState(null); // we want to reuse the add job form to updation instead of creating a new one altogether.
+
   // =======================
   // HELPER FUNCTIONS
   // =======================
@@ -53,11 +59,14 @@ function App() {
         params: {
           search: debouncedSearch,
           status: statusFilter,
-          sort: sort
+          sort: sort,
+          page: page,
+          limit: limit
         }
       });
 
       setJobs(res.data.jobs);
+      setTotalPages(res.data.totalPages)
 
     } catch (err) {
       console.log("ERROR OCCURED: ", err.message);
@@ -81,9 +90,18 @@ function App() {
     e.preventDefault();
 
     try {
-      const res = await API.post("/jobs", formData);
+      if (editId) {
+        // Update Job
+        await API.put(`/jobs/${editId}`, formData);
+        toast.success("Job Updated Successfully");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        // Create Job
+        await API.post("/jobs", formData);
+        toast.success("Job Added Successfully!");
+      }
 
-      toast.success("Job Added Successfully!");
+
 
       fetchJobs();
 
@@ -95,9 +113,39 @@ function App() {
         salary: ""
       });
 
+      setEditId(null);
+
     } catch (err) {
       console.log("error occured: ", err.message);
     }
+  }
+
+  const handleEdit = async (job) => {
+
+    setFormData({
+      company: job.company,
+      role: job.role,
+      status: job.status,
+      location: job.location,
+      salary: job.salary
+    });
+
+    setEditId(job._id); // change the id from null to actual job id to allow updation through form
+    window.scrollTo({
+      top:0,
+      behavior: 'smooth'
+    })
+  }
+
+  const handleCancelEdit = async () => {
+    setEditId(null);
+    setFormData({
+        company: "",
+        role: "",
+        status: "",
+        location: "",
+        salary: ""
+      });
   }
 
   // =======================
@@ -114,6 +162,10 @@ function App() {
 
   useEffect(() => {
     fetchJobs();
+  }, [debouncedSearch, statusFilter, sort, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [debouncedSearch, statusFilter, sort]);
 
   // =======================
@@ -134,7 +186,7 @@ function App() {
       <div className="max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="mb-8 bg-white p-5 rounded-xl shadow-md">
 
-          <h2 className="text-lg font-semibold mb-3">Add Job</h2>
+          <h2 className="text-lg font-semibold mb-3"> {editId ? "Edit Job" : "Add Job"}</h2>
 
           <input name="company" placeholder="Company*" value={formData.company} onChange={handleChange} className="border w-full p-2 mb-2" />
           <input name="role" placeholder="Role*" value={formData.role} onChange={handleChange} className="border w-full p-2 mb-2" />
@@ -147,12 +199,23 @@ function App() {
             <option value="Rejected">Rejected</option>
           </select>
 
-          <input name="location" placeholder="Location" value={formData.location} onChange={handleChange} className="border w-full p-2 mb-2" />
-          <input name="salary" placeholder="Salary" value={formData.salary} onChange={handleChange} className="border w-full p-2 mb-2" />
+          <input name="location" placeholder="Location" value={formData.location} onChange={handleChange} className="border w-full p-2 mb-2" required />
+          <input name="salary" placeholder="Salary" value={formData.salary} onChange={handleChange} className="border w-full p-2 mb-2" required />
 
           <button type='submit' className="bg-blue-500 text-white px-4 py-2 rounded">
-            Add Job
+            {editId ? "Update Job" : "Add Job"}
           </button>
+
+          {/* Cancel Button for update form */}
+          { editId && (
+            <button
+              type='button'
+              onClick={handleCancelEdit}
+              className='className="ml-2 px-4 py-2 border rounded text-gray-600"'
+            >
+              Cancel
+            </button>
+          )}
         </form>
       </div>
 
@@ -173,7 +236,6 @@ function App() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="">Filter By Status</option>
             <option value="Applied">Applied</option>
             <option value="Rejected">Rejected</option>
             <option value="Interviewing">Interviewing</option>
@@ -193,8 +255,8 @@ function App() {
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Job Grid */}
+      <div className="max-w-6xl mx-auto px-4 pb-6 sm:px-6 lg:px-8">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
           {jobs.map((job, index) => (
@@ -222,11 +284,39 @@ function App() {
                 <p><span className="font-medium">💰 Salary:</span> {job.salary}</p>
               </div>
 
+              <button
+                onClick={() => handleEdit(job)}
+                className="mt-3 text-sm border px-3 py-1 rounded hover:bg-gray-100 transition"
+              >
+                ✏️ Edit
+              </button>
+
             </div>
           ))}
 
         </div>
+      </div> {/* Job Card Grid end */}
+
+      <div className='flex justify-center items-center gap-4 mt-8'>
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+          className='px-4 py-2 bg-grey-200 rounded disabled:opacity-50'
+        >
+          ⬅️ Prev
+        </button>
+
+        <span className='font-medium'>Page {page}</span>
+
+        <button
+          onClick={() => setPage(page + 1)}
+          disabled={page === totalPages}
+          className='px-4 py-2 bg-grey-200 rounded disabled:opacity-50'
+        >
+          Next ➡️
+        </button>
       </div>
+
     </div>
   );
 }
