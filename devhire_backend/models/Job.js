@@ -13,6 +13,10 @@ const jobSchema = new mongoose.Schema({
         trim: true,
         minLength: 3
     },
+    linkTitle:{
+        type: String,
+        trim: true
+    },
     link:{
         type: String,
         trim: true,
