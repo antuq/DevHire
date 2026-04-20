@@ -154,6 +154,21 @@ function App() {
     });
   }
 
+  const handleDelete = async (id) => {
+    const confirmDelete = confirm("Are you sure you want to delete this job?");
+    if(!confirmDelete) return; 
+
+    try{
+      await API.delete(`/jobs/${id}`);
+      toast.success("Job Deleted Successfully.");
+
+      fetchJobs();
+    } catch (err) {
+      console.log("error occured: ",err.message);
+    }
+
+  }
+
   // =======================
   // EFFECTS
   // =======================
@@ -285,6 +300,13 @@ function App() {
                   className="text-sm border px-3 py-1 rounded-md hover:bg-gray-100 transition"
                 >
                   ✏️ Edit
+                </button>
+
+                <button
+                  className="text-sm border px-3 py-1 rounded-md text-red-600 hover:bg-red-50 transition"
+                  onClick={()=> handleDelete(job._id)}
+                >
+                  🗑 Delete
                 </button>
 
               </div>
