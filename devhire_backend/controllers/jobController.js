@@ -6,7 +6,10 @@ const Job = require("../models/Job");
 // =======================
 const createJob = async (req, res) => {
     try {
-        const job = new Job(req.body);
+        const job = new Job({
+            ...req.body,
+            user: req.user
+        });
         await job.save();
 
         res.status(201).json({
@@ -45,7 +48,7 @@ const getJobs = async (req, res) => {
         limit = parseInt(limit) || 5;
         const skip = (page - 1) * limit;
 
-        let filter = {};
+        let filter = { user: req.user};
 
         // exact filter
         if (status) filter.status = status;

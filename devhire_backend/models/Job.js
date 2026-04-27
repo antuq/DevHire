@@ -42,6 +42,13 @@ const jobSchema = new mongoose.Schema({
         trim: true,
         default: ""
     },
+    // Phase 9: updated Job schema to add foreign reference to User schema
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    }
+    ,
     createdAt:{
         type: Date,
         default: Date.now
