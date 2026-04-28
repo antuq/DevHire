@@ -102,7 +102,7 @@ const getJobs = async (req, res) => {
 
     } catch (err) {
         console.log("Error reading data:", err.message);
-        res.status(500).json({ message: "Error fetching jobs" });
+        res.status(500).json({ message: "Job not found or not authorized" });
     }
 };
 
@@ -118,17 +118,18 @@ const getJobById = async (req, res) => {
             return res.status(400).json({ message: "Invalid ID" });
         }
 
-        const job = await Job.findById(id);
+        const job = await Job.findOne({ _id: id, user: req.user});
+
 
         if (!job) {
-            return res.status(404).json({ message: "Job not found" });
+            return res.status(404).json({ message: "Error fetching job" });
         }
 
         res.status(200).json(job);
 
     } catch (err) {
         console.log("Error reading data:", err.message);
-        res.status(500).json({ message: "Error fetching job" });
+        res.status(500).json({ message: "Job not found or not authorized" });
     }
 };
 
@@ -145,17 +146,17 @@ const updateJob = async (req, res) => {
             return res.status(400).json({ message: "Invalid ID" });
         }
 
-        const updatedJob = await Job.findByIdAndUpdate(
-            id,
+        const updatedJob = await Job.findOneAndUpdate(
+            {_id: id , user: req.user },
             req.body,
             {
                 returnDocument: "after",
-                runValidators: "true"
+                runValidators: true
             }
         );
 
         if (!updatedJob) {
-            return res.status(404).json({ message: "Job not found" });
+            return res.status(404).json({ message: "Error updating job" });
         }
 
         res.status(200).json({
@@ -165,7 +166,7 @@ const updateJob = async (req, res) => {
 
     } catch (err) {
         console.log("Error updating data:", err.message);
-        res.status(500).json({ message: "Error updating job" });
+        res.status(500).json({ message: "Job not found or not authorized" });
     }
 };
 
@@ -181,10 +182,10 @@ const deleteJob = async (req, res) => {
             return res.status(400).json({ message: "Invalid ID" });
         }
 
-        const deletedJob = await Job.findByIdAndDelete(id);
+        const deletedJob = await Job.findOneAndDelete({ _id : id, user: req.user});
 
         if (!deletedJob) {
-            return res.status(404).json({ message: "Job not found" });
+            return res.status(404).json({ message: "Job not found or not authorized" });
         }
 
         res.status(200).json({
