@@ -49,12 +49,7 @@ const getJobs = async (req, res) => {
         const skip = (page - 1) * limit;
 
         // ---------------FOR TESTING PURPOSE-------------------------
-        // let filter = { user: req.user};
-
-        let filter = {};
-        if (req.user){
-            filter.user = req.user;
-        }
+        let filter = { user: req.user};
 
         // ---------------FOR TESTING PURPOSE-------------------------
 
