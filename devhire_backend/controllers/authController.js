@@ -8,7 +8,6 @@ const User = require("../models/User");
 const userRegistration = async (req, res) => {
 
     try {
-
         let { name, email, password } = req.body;
 
         // basic sanitation
@@ -64,7 +63,6 @@ const userRegistration = async (req, res) => {
         console.log("Error Occured: ", err.message);
         res.status(500).json({ message: "Registration failed." });
     }
-
 }
 
 // USER LOGIN
@@ -126,6 +124,5 @@ const userLogin = async (req, res) => {
         console.log("error occured: ",err.message)
     }
 }
-
 
 module.exports = { userRegistration, userLogin };

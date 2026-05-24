@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard'
 import Navbar from './components/Navbar'
 import Help from './pages/Help'
 import ProtectedRoutes from './components/ProtectedRoutes'
+import Register from './pages/Register'
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
         <Route path="/about" element={<About/>}> About</Route>
         <Route path='/help' element={<Help/>}>Help</Route>
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn}/>}> Login</Route>
+        <Route path="/register" element={<Register/>}>Register</Route>
 
       </Routes>
     </Router>

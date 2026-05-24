@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import API from '../services/api'
-import toast, { Toaster } from "react-hot-toast"
+import toast from "react-hot-toast"
+import { FilePlusCorner } from 'lucide-react'
 
 export default function Dashboard() {
 
@@ -31,6 +32,8 @@ export default function Dashboard() {
 
     const [editId, setEditId] = useState(null); // we want to reuse the add job form to updation instead of creating a new one altogether.
 
+    // to create a floating [add job] button to store new job add form.
+    const [showModal, setShowModal] = useState(false);
 
     // =======================
     // HELPER FUNCTIONS
@@ -116,7 +119,7 @@ export default function Dashboard() {
             });
 
             setEditId(null);
-
+            showModal(false);
         } catch (err) {
             console.log("error occured: ", err.message);
         }
@@ -135,13 +138,14 @@ export default function Dashboard() {
         });
 
         setEditId(job._id); // change the id from null to actual job id to allow updation through form
+        setShowModal(true);
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         })
     }
 
-    const handleCancelEdit = async () => {
+    const handleCancel = async () => {
         setEditId(null);
         setFormData({
             company: "",
@@ -152,6 +156,7 @@ export default function Dashboard() {
             link: "",
             linkTitle: ""
         });
+        setShowModal(false);
     }
 
     const handleDelete = async (id) => {
@@ -166,7 +171,6 @@ export default function Dashboard() {
         } catch (err) {
             console.log("error occured: ", err.message);
         }
-
     }
 
     // =======================
@@ -189,7 +193,6 @@ export default function Dashboard() {
         setPage(1);
     }, [debouncedSearch, statusFilter, sort]);
 
-
     // =======================
     // UI
     // =======================
@@ -198,58 +201,67 @@ export default function Dashboard() {
         <>
             <div className="min-h-screen bg-gradient-to-br from-gray-100 via-slate-100 to-blue-100">
 
-                <Toaster position='top-right' />
-
                 {/* Header */}
                 <h1 className="text-4xl font-bold text-center mb-10 text-gray-900 tracking-tight">
                     DevHire Dashboard
                 </h1>
 
                 {/* Form */}
-                <div className="max-w-2xl mx-auto">
-                    <form onSubmit={handleSubmit} className="mb-8 bg-white p-5 rounded-xl shadow-md">
+                <div className={`
+                    fixed z-50 inset-0 backdrop-blur-sm flex justify-center items-center transition-all duration-300
+                    ${showModal ? "opacity-100" : "opacity-0 pointer-events-none"}
+                `}>
+                    <div className={`
+                        bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-auto p-6 transition-all duration-300
+                        ${showModal
+                            ? "opacity-100 scale-100"
+                            : "opacity-0 scale-95"
+                        }`}
+                    >
+                        <form onSubmit={handleSubmit} className="mb-8 bg-white p-5 rounded-xl shadow-md">
 
-                        <h2 className="text-lg font-semibold mb-3">
-                            {editId ? "Edit Job" : "Add Job"}
-                        </h2>
+                            <h2 className="text-lg font-semibold mb-3">
+                                {editId ? "Edit Job" : "Add Job"}
+                            </h2>
 
-                        <input name="company" placeholder="Company*" value={formData.company} onChange={handleChange} className="border w-full p-2 mb-2" required />
-                        <input name="role" placeholder="Role*" value={formData.role} onChange={handleChange} className="border w-full p-2 mb-2" required />
+                            <input name="company" placeholder="Company*" value={formData.company} onChange={handleChange} className="border w-full p-2 mb-2" required />
+                            <input name="role" placeholder="Role*" value={formData.role} onChange={handleChange} className="border w-full p-2 mb-2" required />
 
-                        <select name="status" value={formData.status} onChange={handleChange} className="border w-full p-2 mb-2 rounded">
-                            <option value="">Select Status</option>
-                            <option value="Applied">Applied</option>
-                            <option value="Interviewing">Interviewing</option>
-                            <option value="Offer">Offer</option>
-                            <option value="Rejected">Rejected</option>
-                        </select>
+                            <select name="status" value={formData.status} onChange={handleChange} className="border w-full p-2 mb-2 rounded">
+                                <option value="">Select Status</option>
+                                <option value="Applied">Applied</option>
+                                <option value="Interviewing">Interviewing</option>
+                                <option value="Offer">Offer</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
 
-                        <input name="location" placeholder="Location" value={formData.location} onChange={handleChange} className="border w-full p-2 mb-2" />
-                        <input name="salary" placeholder="Salary" value={formData.salary} onChange={handleChange} className="border w-full p-2 mb-2" />
+                            <input name="location" placeholder="Location" value={formData.location} onChange={handleChange} className="border w-full p-2 mb-2" />
+                            <input name="salary" placeholder="Salary" value={formData.salary} onChange={handleChange} className="border w-full p-2 mb-2" />
 
-                        <input name="link" placeholder="Job Application Link" value={formData.link} onChange={handleChange} className="border w-full p-2 mb-2" />
+                            <input name="link" placeholder="Job Application Link" value={formData.link} onChange={handleChange} className="border w-full p-2 mb-2" />
 
-                        {formData.link && (
-                            <input name="linkTitle" placeholder="Link Title (optional)" value={formData.linkTitle} onChange={handleChange} className="border w-full p-2 mb-2" />
-                        )}
+                            {formData.link && (
+                                <input name="linkTitle" placeholder="Link Title (optional)" value={formData.linkTitle} onChange={handleChange} className="border w-full p-2 mb-2" />
+                            )}
 
-                        <div className="flex gap-2 mt-2">
-                            <button type='submit' className="bg-blue-500 text-white px-4 py-2 rounded">
-                                {editId ? "Update Job" : "Add Job"}
-                            </button>
+                            <div className="flex gap-2 mt-2">
+                                <button type='submit' className="bg-blue-500 text-white px-4 py-2 rounded">
+                                    {editId ? "Update Job" : "Add Job"}
+                                </button>
 
-                            {editId && (
                                 <button
                                     type='button'
-                                    onClick={handleCancelEdit}
+                                    onClick={handleCancel}
                                     className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
                                 >
                                     Cancel
                                 </button>
-                            )}
-                        </div>
-                    </form>
+
+                            </div>
+                        </form>
+                    </div>
                 </div>
+
 
                 {/* Grid */}
                 <div className="max-w-6xl mx-auto px-4 pb-6">
@@ -339,6 +351,16 @@ export default function Dashboard() {
                         Next ➡️
                     </button>
                 </div>
+
+                {/* Floating Action Button (FAB) to add job */}
+                <abbr title='Click to Add Job'>
+                    <button
+                        onClick={() => setShowModal((prev) => !prev)} // to toggle add job button.
+                        className='fixed bottom-8 right-8 bg-blue-500 hover:bg-blue-600 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition duration-300'
+                    >
+                        <FilePlusCorner size={32} />
+                    </button>
+                </abbr>
             </div>
         </>
     )

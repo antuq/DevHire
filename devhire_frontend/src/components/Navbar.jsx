@@ -7,7 +7,6 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
 
   const [showMenu, setShowMenu] = useState(false);
 
-
   const token = localStorage.getItem("token"); // later we improve this
 
   const handleLogout = () => {
@@ -48,7 +47,7 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
 
         {!isLoggedIn ?
           (
-            <Link to="/login">Login</Link>
+            <Link to="/login">Login/Register</Link>
           ) :
           (
             <div className="relative">
@@ -84,16 +83,11 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
                     <span>Logout</span>
                     <LogOut size={18} />
                   </button>
-
-
                 </div>
-
-
             </div>
           )
         }
       </div>
-
     </nav>
   );
 }

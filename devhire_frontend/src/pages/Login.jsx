@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+import toast from "react-hot-toast";
+
 import API from "../services/api";
 
-export default function Login( { setIsLoggedIn } ) {
+export default function Login({ setIsLoggedIn }) {
 
     // HANDLING STATES
     const [email, setEmail] = useState("");
@@ -17,28 +21,27 @@ export default function Login( { setIsLoggedIn } ) {
 
         try {
             // login
-            const res =await API.post("/auth/login", { email, password });
+            const res = await API.post("/auth/login", { email, password });
 
             // store token
             localStorage.setItem("token", res.data.token)
             console.log(res.data);
             setIsLoggedIn(true);
+            toast.success("Login successful!");
+
             // navigate to dashboard
             navigation("/dashboard");
 
         } catch (err) {
             console.log("error occured: ", err.message);
+            toast.error(err.response.data.message)
         }
     }
 
     return (
-
         <div className="flex justify-center items-center h-screen">
-            
             <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-80">
-
                 <h2 className="text-xl font-bold mx-24 mb-8">Login</h2>
-
                 <input
                     type="email"
                     placeholder="Email"
@@ -46,7 +49,6 @@ export default function Login( { setIsLoggedIn } ) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
-
                 <input
                     type="password"
                     placeholder="Password"
@@ -54,13 +56,11 @@ export default function Login( { setIsLoggedIn } ) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-
                 <button className="bg-blue-500 text-white w-full p-2 rounded">
                     Login
                 </button>
-
+                <p className="text-center mt-4">Don't have an account? <Link className="font-medium text-fg-brand underline hover:no-underline" to="/register">Register Now</Link></p>
             </form>
         </div>
-
     )
 }
