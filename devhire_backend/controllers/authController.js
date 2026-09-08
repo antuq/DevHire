@@ -71,25 +71,35 @@ const userLogin = async (req, res) => {
     try {
         let { email, password } = req.body;
 
+        // 1. Check what the frontend is actually passing
+        console.log("--- DEBUG LOGIN START ---");
+        console.log("Raw req.body received from client:", req.body);
+
         // check fields
         if (!email || !password) {
+            console.log("CRITICAL: Email or Password was parsed as undefined/empty!");
             return res.status(400).json({
                 message: "Email and password are required."
             })
         }
 
         // sanitise fields
-        email.toLowerCase().trim();
-        password.trim();
+        email = email.toLowerCase().trim();
+        password = password.trim();
+
+         console.log("Sanitized variables being sent to MongoDB query -> Email:", `"${email}"`, "Password:", `"${password}"`);
 
         // find user
         const user = await User.findOne({ email });
 
         if (!user) {
+            console.log("Mongoose Database Query Result:", user);
+        console.log("--- DEBUG LOGIN END ---");
             return res.status(400).json({
                 message: "User doesn't exist"
             })
         }
+        
 
         // compare password
         const isMatch = await bcrypt.compare(password, user.password);

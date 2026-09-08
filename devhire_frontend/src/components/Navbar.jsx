@@ -7,8 +7,6 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
 
   const [showMenu, setShowMenu] = useState(false);
 
-  const token = localStorage.getItem("token"); // later we improve this
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
@@ -52,7 +50,7 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
           (
             <div className="relative">
               <button
-                onClick={() => setShowMenu(!showMenu)}
+                onClick={() => setShowMenu((prev) => !prev)}
                 className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold"
               > 👤 </button>
 

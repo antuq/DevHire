@@ -119,7 +119,8 @@ export default function Dashboard() {
             });
 
             setEditId(null);
-            showModal(false);
+            setShowModal(false);
+
         } catch (err) {
             console.log("error occured: ", err.message);
         }
