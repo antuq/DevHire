@@ -135,4 +135,146 @@ const userLogin = async (req, res) => {
     }
 }
 
-module.exports = { userRegistration, userLogin };
+const getUserProfile = async (req,res) => {
+    try{
+        // find user profile
+        const user = await User.findById(req.user).select("-password");
+
+        // raise error if doesn't exist
+        if(!user){
+            return res.status(404).json({
+                message: "User not found"
+            })
+        }
+
+        // return user
+        return res.status(200).json({
+            user
+        });
+
+    } catch(err){
+        console.log("Error fetching user profile:", err.message);
+        res.status(500).json({
+            message: "Error fetching profile"
+        });
+    }
+}
+
+const updateUserProfile = async (req,res) => {
+    try{
+        let { name, email } = req.body;
+
+        // basic sanitization
+        name = name.trim();
+        email = email.trim();
+
+        // check if fields are filled.
+        if(!name || !email) {
+            return res.status(400).json({
+                message: "Name and email are required"
+            })
+        }
+
+        // Email Validation
+        const emailRegex =  /^\S+@\S+\.\S+$/;
+        if(!emailRegex.test(email)){
+            return res.status(400).json({
+                message: "Invalid email format"
+            })
+        }
+        
+        // find the logged-in user
+        const user = await User.findById(req.user);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        // check if the email is already taken by another user.
+        const existingUser = await User.findOne({
+            email,
+            _id : {$ne: req.user}
+        })
+
+        if(existingUser){
+            return res.status(400).json({
+                message: "Email already in use"
+            });
+        }
+
+        // update user
+        user.name = name;
+        user.email = email;
+
+        await user.save();
+
+        return res.status(200).json({
+            message: "User updated successfully.",
+            user:{
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+    } catch (err) {
+        console.log("Error updating profile: ", err.message);
+
+        res.status(500).json({
+            message: "Error updating profile."
+        })
+    }
+}
+
+const updateUserPassword = async (req,res) => {
+    try{
+        let { password } = req.body;
+
+        // sanitization
+        password = password.trim();
+
+        // check password
+        if(!password){
+            return res.status(400).json({
+                message: "Password is required"
+            })
+        }
+
+        // find the logged in user
+        const user = await User.findById(req.user);
+
+        if(!user){
+            return res.status(404).json({
+                message: "User not found"
+            })
+        }
+
+        // hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password,salt);
+
+        // update password
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.status(200).json({
+            message: "Password updated successfully."
+        });
+
+    } catch (err){
+        console.log("error occured: ",err.message);
+
+        res.status(500).json({
+            message: "Error updating password"
+        })
+    }
+}
+
+module.exports = { 
+    userRegistration, 
+    userLogin, 
+    getUserProfile, 
+    updateUserProfile,
+    updateUserPassword
+};

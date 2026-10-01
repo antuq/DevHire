@@ -30,10 +30,10 @@ export default function Dashboard() {
     const [totalPages, setTotalPages] = useState(1);
     const limit = 6;
 
-    const [editId, setEditId] = useState(null); // we want to reuse the add job form to updation instead of creating a new one altogether.
+    const [editId, setEditId] = useState(null);
 
-    // to create a floating [add job] button to store new job add form.
     const [showModal, setShowModal] = useState(false);
+
 
     // =======================
     // HELPER FUNCTIONS
@@ -43,16 +43,21 @@ export default function Dashboard() {
         switch (status) {
             case "Applied":
                 return "bg-blue-100 text-blue-600";
+
             case "Interviewing":
                 return "bg-yellow-100 text-yellow-600";
+
             case "Rejected":
                 return "bg-red-100 text-red-600";
+
             case "Offer":
                 return "bg-green-100 text-green-600";
+
             default:
                 return "bg-gray-100 text-gray-600";
         }
     };
+
 
     // =======================
     // API FUNCTIONS
@@ -60,6 +65,7 @@ export default function Dashboard() {
 
     const fetchJobs = async () => {
         try {
+
             const res = await API.get("/jobs", {
                 params: {
                     search: debouncedSearch,
@@ -71,39 +77,52 @@ export default function Dashboard() {
             });
 
             setJobs(res.data.jobs);
-            setTotalPages(res.data.totalPages)
+            setTotalPages(res.data.totalPages);
 
         } catch (err) {
             console.log("ERROR OCCURED: ", err.message);
         }
-    }
+    };
+
 
     // =======================
     // EVENT HANDLERS
     // =======================
 
     const handleChange = (e) => {
+
         const { name, value } = e.target;
 
         setFormData({
             ...formData,
             [name]: value
         });
-    }
+    };
+
 
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
         try {
+
             if (editId) {
-                // Update Job
+
                 await API.put(`/jobs/${editId}`, formData);
+
                 toast.success("Job Updated Successfully");
-                window.scrollTo({ top: 0, behavior: "smooth" });
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
             } else {
-                // Create Job
+
                 await API.post("/jobs", formData);
+
                 toast.success("Job Added Successfully!");
+
             }
 
             fetchJobs();
@@ -122,9 +141,12 @@ export default function Dashboard() {
             setShowModal(false);
 
         } catch (err) {
+
             console.log("error occured: ", err.message);
+
         }
-    }
+    };
+
 
     const handleEdit = async (job) => {
 
@@ -138,16 +160,20 @@ export default function Dashboard() {
             linkTitle: job.linkTitle || ""
         });
 
-        setEditId(job._id); // change the id from null to actual job id to allow updation through form
+        setEditId(job._id);
         setShowModal(true);
+
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
-        })
-    }
+        });
+    };
+
 
     const handleCancel = async () => {
+
         setEditId(null);
+
         setFormData({
             company: "",
             role: "",
@@ -157,212 +183,624 @@ export default function Dashboard() {
             link: "",
             linkTitle: ""
         });
+
         setShowModal(false);
-    }
+    };
+
 
     const handleDelete = async (id) => {
-        const confirmDelete = confirm("Are you sure you want to delete this job?");
+
+        const confirmDelete =
+            confirm("Are you sure you want to delete this job?");
+
         if (!confirmDelete) return;
 
         try {
+
             await API.delete(`/jobs/${id}`);
+
             toast.success("Job Deleted Successfully.");
 
             fetchJobs();
+
         } catch (err) {
+
             console.log("error occured: ", err.message);
+
         }
-    }
+    };
+
 
     // =======================
     // EFFECTS
     // =======================
 
     useEffect(() => {
+
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
         }, 500);
 
         return () => clearTimeout(timer);
+
     }, [search]);
 
-    useEffect(() => {
-        fetchJobs();
-    }, [debouncedSearch, statusFilter, sort, page]);
 
     useEffect(() => {
+
+        fetchJobs();
+
+    }, [debouncedSearch, statusFilter, sort, page]);
+
+
+    useEffect(() => {
+
         setPage(1);
+
     }, [debouncedSearch, statusFilter, sort]);
+
 
     // =======================
     // UI
     // =======================
 
     return (
-        <>
-            <div className="min-h-screen bg-gradient-to-br from-gray-100 via-slate-100 to-blue-100">
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 via-slate-100 to-blue-100 text-gray-900">
 
-                {/* Header */}
-                <h1 className="text-4xl font-bold text-center mb-10 text-gray-900 tracking-tight">
-                    DevHire Dashboard
-                </h1>
 
-                {/* Form */}
-                <div className={`
-                    fixed z-50 inset-0 backdrop-blur-sm flex justify-center items-center transition-all duration-300
-                    ${showModal ? "opacity-100" : "opacity-0 pointer-events-none"}
-                `}>
-                    <div className={`
-                        bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-auto p-6 transition-all duration-300
+            {/* =======================
+                HEADER
+            ======================= */}
+
+            <header className="max-w-6xl mx-auto px-4 pt-12 pb-8">
+
+                <div className="text-center">
+
+                    <p className="text-blue-600 font-semibold text-sm uppercase tracking-widest">
+                        Your applications
+                    </p>
+
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight mt-2">
+                        DevHire Dashboard
+                    </h1>
+
+                    <p className="mt-3 text-gray-600 max-w-xl mx-auto">
+                        Keep track of your job applications and stay on top
+                        of your search.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            {/* =======================
+                SEARCH & FILTER BAR
+            ======================= */}
+
+            <div className="max-w-6xl mx-auto px-4 pb-8">
+
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md border border-gray-100 p-4">
+
+                    <div className="grid md:grid-cols-3 gap-3">
+
+                        {/* Search */}
+                        <input
+                            type="text"
+                            placeholder="Search applications..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                        />
+
+
+                        {/* Status Filter */}
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                        >
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+                            <option value="Applied">
+                                Applied
+                            </option>
+
+                            <option value="Interviewing">
+                                Interviewing
+                            </option>
+
+                            <option value="Offer">
+                                Offer
+                            </option>
+
+                            <option value="Rejected">
+                                Rejected
+                            </option>
+
+                        </select>
+
+
+                        {/* Sort */}
+                        <select
+                            value={sort}
+                            onChange={(e) => setSort(e.target.value)}
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                        >
+
+                            <option value="">
+                                Sort By
+                            </option>
+
+                            <option value="newest">
+                                Newest First
+                            </option>
+
+                            <option value="oldest">
+                                Oldest First
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {/* =======================
+                FORM MODAL
+            ======================= */}
+
+            <div
+                className={`
+                    fixed z-50 inset-0 bg-black/20 backdrop-blur-sm
+                    flex justify-center items-center px-4
+                    transition-all duration-300
+                    ${showModal
+                        ? "opacity-100"
+                        : "opacity-0 pointer-events-none"
+                    }
+                `}
+            >
+
+                <div
+                    className={`
+                        bg-white rounded-2xl shadow-2xl
+                        w-full max-w-2xl
+                        p-6 md:p-8
+                        transition-all duration-300
+                        max-h-[90vh] overflow-y-auto
                         ${showModal
                             ? "opacity-100 scale-100"
                             : "opacity-0 scale-95"
-                        }`}
-                    >
-                        <form onSubmit={handleSubmit} className="mb-8 bg-white p-5 rounded-xl shadow-md">
+                        }
+                    `}
+                >
 
-                            <h2 className="text-lg font-semibold mb-3">
+                    <form onSubmit={handleSubmit}>
+
+                        {/* Modal Header */}
+                        <div className="mb-6">
+
+                            <p className="text-blue-600 font-semibold text-xs uppercase tracking-widest">
+                                Application
+                            </p>
+
+                            <h2 className="text-2xl font-bold mt-1">
                                 {editId ? "Edit Job" : "Add Job"}
                             </h2>
 
-                            <input name="company" placeholder="Company*" value={formData.company} onChange={handleChange} className="border w-full p-2 mb-2" required />
-                            <input name="role" placeholder="Role*" value={formData.role} onChange={handleChange} className="border w-full p-2 mb-2" required />
+                            <p className="text-sm text-gray-500 mt-1">
+                                {editId
+                                    ? "Update the details of this application."
+                                    : "Add the details of a new job application."
+                                }
+                            </p>
 
-                            <select name="status" value={formData.status} onChange={handleChange} className="border w-full p-2 mb-2 rounded">
-                                <option value="">Select Status</option>
-                                <option value="Applied">Applied</option>
-                                <option value="Interviewing">Interviewing</option>
-                                <option value="Offer">Offer</option>
-                                <option value="Rejected">Rejected</option>
-                            </select>
+                        </div>
 
-                            <input name="location" placeholder="Location" value={formData.location} onChange={handleChange} className="border w-full p-2 mb-2" />
-                            <input name="salary" placeholder="Salary" value={formData.salary} onChange={handleChange} className="border w-full p-2 mb-2" />
 
-                            <input name="link" placeholder="Job Application Link" value={formData.link} onChange={handleChange} className="border w-full p-2 mb-2" />
+                        {/* Inputs */}
+                        <div className="space-y-4">
 
-                            {formData.link && (
-                                <input name="linkTitle" placeholder="Link Title (optional)" value={formData.linkTitle} onChange={handleChange} className="border w-full p-2 mb-2" />
-                            )}
+                            <div>
 
-                            <div className="flex gap-2 mt-2">
-                                <button type='submit' className="bg-blue-500 text-white px-4 py-2 rounded">
-                                    {editId ? "Update Job" : "Add Job"}
-                                </button>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Company
+                                </label>
 
-                                <button
-                                    type='button'
-                                    onClick={handleCancel}
-                                    className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
-                                >
-                                    Cancel
-                                </button>
+                                <input
+                                    name="company"
+                                    placeholder="Company name"
+                                    value={formData.company}
+                                    onChange={handleChange}
+                                    className="border border-gray-200 rounded-xl w-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                                    required
+                                />
 
                             </div>
-                        </form>
-                    </div>
+
+
+                            <div>
+
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Role
+                                </label>
+
+                                <input
+                                    name="role"
+                                    placeholder="Job role"
+                                    value={formData.role}
+                                    onChange={handleChange}
+                                    className="border border-gray-200 rounded-xl w-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                                    required
+                                />
+
+                            </div>
+
+
+                            <div>
+
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Status
+                                </label>
+
+                                <select
+                                    name="status"
+                                    value={formData.status}
+                                    onChange={handleChange}
+                                    className="border border-gray-200 rounded-xl w-full px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                                >
+
+                                    <option value="">
+                                        Select Status
+                                    </option>
+
+                                    <option value="Applied">
+                                        Applied
+                                    </option>
+
+                                    <option value="Interviewing">
+                                        Interviewing
+                                    </option>
+
+                                    <option value="Offer">
+                                        Offer
+                                    </option>
+
+                                    <option value="Rejected">
+                                        Rejected
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div className="grid sm:grid-cols-2 gap-4">
+
+                                <div>
+
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Location
+                                    </label>
+
+                                    <input
+                                        name="location"
+                                        placeholder="Location"
+                                        value={formData.location}
+                                        onChange={handleChange}
+                                        className="border border-gray-200 rounded-xl w-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                                    />
+
+                                </div>
+
+
+                                <div>
+
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Salary
+                                    </label>
+
+                                    <input
+                                        name="salary"
+                                        placeholder="Salary"
+                                        value={formData.salary}
+                                        onChange={handleChange}
+                                        className="border border-gray-200 rounded-xl w-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                                    />
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Job Application Link
+                                </label>
+
+                                <input
+                                    name="link"
+                                    placeholder="https://..."
+                                    value={formData.link}
+                                    onChange={handleChange}
+                                    className="border border-gray-200 rounded-xl w-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                                />
+
+                            </div>
+
+
+                            {formData.link && (
+
+                                <div>
+
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Link Title
+                                    </label>
+
+                                    <input
+                                        name="linkTitle"
+                                        placeholder="e.g. LinkedIn Job Posting"
+                                        value={formData.linkTitle}
+                                        onChange={handleChange}
+                                        className="border border-gray-200 rounded-xl w-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                                    />
+
+                                </div>
+
+                            )}
+
+                        </div>
+
+
+                        {/* Buttons */}
+                        <div className="flex gap-3 mt-7">
+
+                            <button
+                                type="submit"
+                                className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm hover:bg-blue-700 hover:shadow-md transition"
+                            >
+                                {editId ? "Update Job" : "Add Job"}
+                            </button>
+
+
+                            <button
+                                type="button"
+                                onClick={handleCancel}
+                                className="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-600 font-medium hover:bg-gray-100 transition"
+                            >
+                                Cancel
+                            </button>
+
+                        </div>
+
+                    </form>
+
                 </div>
 
+            </div>
 
-                {/* Grid */}
-                <div className="max-w-6xl mx-auto px-4 pb-6">
+
+            {/* =======================
+                JOB GRID
+            ======================= */}
+
+            <main className="max-w-6xl mx-auto px-4 pb-8">
+
+                {jobs.length > 0 ? (
+
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
                         {jobs.map((job, index) => (
+
                             <div
                                 key={job._id}
-                                style={{ animationDelay: `${index * 50}ms` }}
-                                className="bg-white p-5 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition duration-300 border border-gray-100 flex flex-col justify-between"
+                                style={{
+                                    animationDelay: `${index * 50}ms`
+                                }}
+                                className="
+                                    bg-white p-5 rounded-2xl
+                                    shadow-md hover:shadow-xl
+                                    hover:-translate-y-1
+                                    transition duration-300
+                                    border border-gray-100
+                                    flex flex-col justify-between
+                                "
                             >
 
                                 {/* Top */}
                                 <div>
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <h2 className="text-lg font-semibold text-gray-900">{job.role}</h2>
-                                            <p className="text-gray-500 text-sm">{job.company}</p>
+
+                                    <div className="flex justify-between items-start gap-3">
+
+                                        <div className="min-w-0">
+
+                                            <h2 className="text-lg font-semibold text-gray-900 truncate">
+                                                {job.role}
+                                            </h2>
+
+                                            <p className="text-gray-500 text-sm truncate">
+                                                {job.company}
+                                            </p>
+
                                         </div>
 
-                                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(job.status)}`}>
+
+                                        <span
+                                            className={`
+                                                px-3 py-1
+                                                text-xs font-medium
+                                                rounded-full whitespace-nowrap
+                                                ${getStatusColor(job.status)}
+                                            `}
+                                        >
                                             {job.status}
                                         </span>
+
                                     </div>
 
-                                    <div className="border-t my-4"></div>
 
-                                    <div className="space-y-1 text-sm text-gray-700">
-                                        <p><span className="font-medium">📍 Location:</span> {job.location}</p>
-                                        <p><span className="font-medium">💰 Salary:</span> {job.salary}</p>
+                                    <div className="border-t border-gray-100 my-4"></div>
+
+
+                                    <div className="space-y-2 text-sm text-gray-700">
+
+                                        <p>
+                                            <span className="font-medium">
+                                                📍 Location:
+                                            </span>{" "}
+                                            {job.location || "Not specified"}
+                                        </p>
+
+                                        <p>
+                                            <span className="font-medium">
+                                                💰 Salary:
+                                            </span>{" "}
+                                            {job.salary || "Not specified"}
+                                        </p>
+
                                     </div>
+
                                 </div>
 
-                                {/* Actions */}
-                                <div className="flex justify-between items-center mt-4">
 
-                                    {job.link && (
+                                {/* Actions */}
+                                <div className="flex justify-between items-center gap-2 mt-5">
+
+                                    {job.link ? (
+
                                         <a
                                             href={job.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-sm px-3 py-1 border border-blue-200 rounded-md text-blue-600 hover:bg-blue-50 transition"
+                                            className="text-sm px-3 py-1.5 border border-blue-200 rounded-lg text-blue-600 hover:bg-blue-50 transition truncate max-w-[120px]"
                                         >
                                             🔗 {job.linkTitle || "View Job"}
                                         </a>
+
+                                    ) : (
+
+                                        <span></span>
+
                                     )}
 
-                                    <button
-                                        onClick={() => handleEdit(job)}
-                                        className="text-sm border px-3 py-1 rounded-md hover:bg-gray-100 transition"
-                                    >
-                                        ✏️ Edit
-                                    </button>
 
-                                    <button
-                                        className="text-sm border px-3 py-1 rounded-md text-red-600 hover:bg-red-50 transition"
-                                        onClick={() => handleDelete(job._id)}
-                                    >
-                                        🗑 Delete
-                                    </button>
+                                    <div className="flex gap-2 ml-auto">
+
+                                        <button
+                                            onClick={() => handleEdit(job)}
+                                            className="text-sm border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition"
+                                        >
+                                            ✏️ Edit
+                                        </button>
+
+
+                                        <button
+                                            className="text-sm border border-red-200 px-3 py-1.5 rounded-lg text-red-600 hover:bg-red-50 transition"
+                                            onClick={() => handleDelete(job._id)}
+                                        >
+                                            🗑 Delete
+                                        </button>
+
+                                    </div>
 
                                 </div>
 
                             </div>
+
                         ))}
 
                     </div>
-                </div>
 
-                {/* Pagination */}
-                <div className='flex justify-center items-center gap-4 mt-8'>
-                    <button
-                        onClick={() => setPage(page - 1)}
-                        disabled={page === 1}
-                        className='px-4 py-2 bg-gray-200 rounded disabled:opacity-50'
-                    >
-                        ⬅️ Prev
-                    </button>
+                ) : (
 
-                    <span className='font-medium'>Page {page}</span>
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-md text-center py-16 px-6">
 
-                    <button
-                        onClick={() => setPage(page + 1)}
-                        disabled={page === totalPages}
-                        className='px-4 py-2 bg-gray-200 rounded disabled:opacity-50'
-                    >
-                        Next ➡️
-                    </button>
-                </div>
+                        <div className="text-4xl mb-4">
+                            📋
+                        </div>
 
-                {/* Floating Action Button (FAB) to add job */}
-                <abbr title='Click to Add Job'>
-                    <button
-                        onClick={() => setShowModal((prev) => !prev)} // to toggle add job button.
-                        className='fixed bottom-8 right-8 bg-blue-500 hover:bg-blue-600 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition duration-300'
-                    >
-                        <FilePlusCorner size={32} />
-                    </button>
-                </abbr>
+                        <h2 className="text-xl font-semibold">
+                            No applications found
+                        </h2>
+
+                        <p className="text-gray-500 mt-2">
+                            Try changing your search or filters, or add a new application.
+                        </p>
+
+                    </div>
+
+                )}
+
+            </main>
+
+
+            {/* =======================
+                PAGINATION
+            ======================= */}
+
+            <div className="flex justify-center items-center gap-4 pb-28">
+
+                <button
+                    onClick={() => setPage(page - 1)}
+                    disabled={page === 1}
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-sm disabled:opacity-40 hover:bg-gray-50 transition"
+                >
+                    ⬅️ Prev
+                </button>
+
+
+                <span className="font-medium text-gray-700 px-2">
+                    Page {page} of {totalPages}
+                </span>
+
+
+                <button
+                    onClick={() => setPage(page + 1)}
+                    disabled={page === totalPages}
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-sm disabled:opacity-40 hover:bg-gray-50 transition"
+                >
+                    Next ➡️
+                </button>
+
             </div>
-        </>
-    )
+
+
+            {/* =======================
+                FLOATING ACTION BUTTON
+            ======================= */}
+
+            <abbr title="Click to Add Job">
+
+                <button
+                    onClick={() => setShowModal((prev) => !prev)}
+                    className="
+                        fixed bottom-8 right-8
+                        bg-blue-600 hover:bg-blue-700
+                        text-white
+                        w-16 h-16
+                        rounded-full
+                        shadow-lg hover:shadow-xl
+                        flex items-center justify-center
+                        transition duration-300
+                        hover:scale-105
+                        z-40
+                    "
+                >
+
+                    <FilePlusCorner size={30} />
+
+                </button>
+
+            </abbr>
+
+        </div>
+    );
 }

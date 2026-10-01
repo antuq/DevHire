@@ -52,9 +52,9 @@ export default function Register() {
             {/* Registration Form on the Right */}
             <div className="w-full md:w-1/2 flex justify-center items-center">
                 <form
-                    className="bg-white p-6 mb-8 rounded shadow-md w-80"
+                    className="bg-white p-8 rounded-2xl shadow-lg w-80"
                     onSubmit={handleRegister}>
-                    <h2 className="text-xl font-bold mb-8 mx-20">Register</h2>
+                    <h2 className="text-2xl font-bold text-center mb-8">Register</h2>
 
                     <input
                         className="border w-full p-2 mb-3"

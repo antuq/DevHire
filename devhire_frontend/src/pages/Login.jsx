@@ -59,8 +59,8 @@ export default function Login({ setIsLoggedIn }) {
 
             {/* RIGHT SIDE */}
             <div className="w-full md:w-1/2 flex justify-center items-center">
-                <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-80">
-                    <h2 className="text-xl font-bold mx-24 mb-8">Login</h2>
+                <form onSubmit={handleLogin} className="bg-white p-8 rounded-2xl shadow-lg w-80">
+                    <h2 className="text-2xl font-bold text-center mb-8">Login</h2>
                     <input
                         type="email"
                         placeholder="Email"
@@ -78,7 +78,7 @@ export default function Login({ setIsLoggedIn }) {
                     <button className="bg-blue-500 text-white w-full p-2 rounded">
                         Login
                     </button>
-                    <p className="text-center mt-4"> Don't have an account? <Link className="font-medium text-fg-brand underline hover:no-underline" to="/register">Register Now</Link></p>
+                    <p className="text-center mt-4 whitespace-nowrap"> Don't have an account? <Link className="font-medium text-fg-brand underline hover:no-underline" to="/register">Register now</Link></p>
                 </form>
             </div>
         </div>
