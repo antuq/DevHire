@@ -1,23 +1,19 @@
-// Load environment variables
 require("dotenv").config();
 
-// Import dependencies
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-// Initialize app
+const jobRoutes = require("./routes/jobRoutes");
+const authRoutes = require("./routes/authRoutes");
+
 const app = express();
 
-// Middleware to parse JSON
 app.use(express.json());
+app.use(cors({
+    origin: process.env.CLIENT_URL
+}));
 
-// Middleware to allow access allow control origin. 
-app.use(cors());
-
-// =======================
-// DATABASE CONNECTION
-// =======================
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log("Mongoose DB connected.");
@@ -26,15 +22,9 @@ mongoose.connect(process.env.MONGO_URI)
         console.log("Error occurred:", err.message);
     });
 
-const jobRoutes = require("./routes/jobRoutes");
-const authRoutes = require("./routes/authRoutes");
+app.use("/api", jobRoutes);
+app.use("/api/auth", authRoutes);
 
-const Job = require("./models/Job");
-const User = require("./models/User");
-
-app.use("/api",jobRoutes);
-app.use("/api/auth",authRoutes);
-
-app.listen(5000,()=>{
-    console.log("Server running on 5000.");
-})
+app.listen(process.env.PORT || 5000, () => {
+    console.log(`Server running on ${process.env.PORT || 5000}.`);
+});

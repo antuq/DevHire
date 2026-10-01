@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
@@ -10,39 +9,43 @@ import AuthGraphic from "../components/AuthGraphic";
 
 export default function Login({ setIsLoggedIn }) {
 
-    // HANDLING STATES
+    // Handling states
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    // NAVIGATION VARIABLE
+    // Navigation
     const navigation = useNavigate();
 
-    // HANDLER FUNCTION
+    // Login handler
     const handleLogin = async (e) => {
         e.preventDefault();
 
         try {
-            // login
-            const res = await API.post("/auth/login", { email, password });
+            const res = await API.post("/auth/login", {
+                email,
+                password
+            });
 
-            // store token
-            localStorage.setItem("token", res.data.token)
-            console.log(res.data);
+            // Store token
+            localStorage.setItem("token", res.data.token);
+
             setIsLoggedIn(true);
             toast.success("Login successful!");
 
-            // navigate to dashboard
+            // Navigate to dashboard
             navigation("/dashboard");
 
         } catch (err) {
-            console.log("error occured: ", err.message);
-            toast.error(err.response.data.message)
+            toast.error(
+                err.response?.data?.message || "Unable to login."
+            );
         }
-    }
+    };
 
     return (
         <div className="relative flex h-screen">
-             {/* back to home link */}
+
+            {/* Back to home link */}
             <div className="absolute top-6 left-6 z-50">
                 <Link
                     to="/"
@@ -59,8 +62,16 @@ export default function Login({ setIsLoggedIn }) {
 
             {/* RIGHT SIDE */}
             <div className="w-full md:w-1/2 flex justify-center items-center">
-                <form onSubmit={handleLogin} className="bg-white p-8 rounded-2xl shadow-lg w-80">
-                    <h2 className="text-2xl font-bold text-center mb-8">Login</h2>
+
+                <form
+                    onSubmit={handleLogin}
+                    className="bg-white p-8 rounded-2xl shadow-lg w-80"
+                >
+
+                    <h2 className="text-2xl font-bold text-center mb-8">
+                        Login
+                    </h2>
+
                     <input
                         type="email"
                         placeholder="Email"
@@ -68,6 +79,7 @@ export default function Login({ setIsLoggedIn }) {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
+
                     <input
                         type="password"
                         placeholder="Password"
@@ -75,12 +87,25 @@ export default function Login({ setIsLoggedIn }) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+
                     <button className="bg-blue-500 text-white w-full p-2 rounded">
                         Login
                     </button>
-                    <p className="text-center mt-4 whitespace-nowrap"> Don't have an account? <Link className="font-medium text-fg-brand underline hover:no-underline" to="/register">Register now</Link></p>
+
+                    <p className="text-center mt-4 whitespace-nowrap">
+                        Don't have an account?{" "}
+                        <Link
+                            className="font-medium text-fg-brand underline hover:no-underline"
+                            to="/register"
+                        >
+                            Register now
+                        </Link>
+                    </p>
+
                 </form>
+
             </div>
+
         </div>
-    )
+    );
 }

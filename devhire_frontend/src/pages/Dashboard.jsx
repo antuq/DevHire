@@ -1,13 +1,19 @@
-import { useEffect, useState } from 'react'
-import API from '../services/api'
-import toast from "react-hot-toast"
-import { FilePlusCorner } from 'lucide-react'
+import { useEffect, useState } from "react";
+import API from "../services/api";
+import toast from "react-hot-toast";
+import {
+    FilePlusCorner,
+    MapPin,
+    Banknote,
+    ExternalLink,
+    Pencil,
+    Trash2,
+    ClipboardList,
+    ChevronLeft,
+    ChevronRight
+} from "lucide-react";
 
 export default function Dashboard() {
-
-    // =======================
-    // STATE
-    // =======================
 
     const [jobs, setJobs] = useState([]);
 
@@ -31,13 +37,8 @@ export default function Dashboard() {
     const limit = 6;
 
     const [editId, setEditId] = useState(null);
-
     const [showModal, setShowModal] = useState(false);
 
-
-    // =======================
-    // HELPER FUNCTIONS
-    // =======================
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -59,20 +60,15 @@ export default function Dashboard() {
     };
 
 
-    // =======================
-    // API FUNCTIONS
-    // =======================
-
     const fetchJobs = async () => {
         try {
-
             const res = await API.get("/jobs", {
                 params: {
                     search: debouncedSearch,
                     status: statusFilter,
-                    sort: sort,
-                    page: page,
-                    limit: limit
+                    sort,
+                    page,
+                    limit
                 }
             });
 
@@ -80,17 +76,12 @@ export default function Dashboard() {
             setTotalPages(res.data.totalPages);
 
         } catch (err) {
-            console.log("ERROR OCCURED: ", err.message);
+            toast.error("Unable to load applications.");
         }
     };
 
 
-    // =======================
-    // EVENT HANDLERS
-    // =======================
-
     const handleChange = (e) => {
-
         const { name, value } = e.target;
 
         setFormData({
@@ -101,13 +92,10 @@ export default function Dashboard() {
 
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
         try {
-
             if (editId) {
-
                 await API.put(`/jobs/${editId}`, formData);
 
                 toast.success("Job Updated Successfully");
@@ -118,11 +106,9 @@ export default function Dashboard() {
                 });
 
             } else {
-
                 await API.post("/jobs", formData);
 
                 toast.success("Job Added Successfully!");
-
             }
 
             fetchJobs();
@@ -141,15 +127,12 @@ export default function Dashboard() {
             setShowModal(false);
 
         } catch (err) {
-
-            console.log("error occured: ", err.message);
-
+            toast.error("Unable to save job.");
         }
     };
 
 
-    const handleEdit = async (job) => {
-
+    const handleEdit = (job) => {
         setFormData({
             company: job.company,
             role: job.role,
@@ -165,13 +148,12 @@ export default function Dashboard() {
 
         window.scrollTo({
             top: 0,
-            behavior: 'smooth'
+            behavior: "smooth"
         });
     };
 
 
-    const handleCancel = async () => {
-
+    const handleCancel = () => {
         setEditId(null);
 
         setFormData({
@@ -189,14 +171,11 @@ export default function Dashboard() {
 
 
     const handleDelete = async (id) => {
-
-        const confirmDelete =
-            confirm("Are you sure you want to delete this job?");
+        const confirmDelete = confirm("Are you sure you want to delete this job?");
 
         if (!confirmDelete) return;
 
         try {
-
             await API.delete(`/jobs/${id}`);
 
             toast.success("Job Deleted Successfully.");
@@ -204,54 +183,34 @@ export default function Dashboard() {
             fetchJobs();
 
         } catch (err) {
-
-            console.log("error occured: ", err.message);
-
+            toast.error("Unable to delete job.");
         }
     };
 
 
-    // =======================
-    // EFFECTS
-    // =======================
-
     useEffect(() => {
-
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
         }, 500);
 
         return () => clearTimeout(timer);
-
     }, [search]);
 
 
     useEffect(() => {
-
         fetchJobs();
-
     }, [debouncedSearch, statusFilter, sort, page]);
 
 
     useEffect(() => {
-
         setPage(1);
-
     }, [debouncedSearch, statusFilter, sort]);
 
-
-    // =======================
-    // UI
-    // =======================
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-100 via-slate-100 to-blue-100 text-gray-900">
 
-
-            {/* =======================
-                HEADER
-            ======================= */}
-
+            {/* Header */}
             <header className="max-w-6xl mx-auto px-4 pt-12 pb-8">
 
                 <div className="text-center">
@@ -274,17 +233,13 @@ export default function Dashboard() {
             </header>
 
 
-            {/* =======================
-                SEARCH & FILTER BAR
-            ======================= */}
-
+            {/* Search & Filter Bar */}
             <div className="max-w-6xl mx-auto px-4 pb-8">
 
                 <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md border border-gray-100 p-4">
 
                     <div className="grid md:grid-cols-3 gap-3">
 
-                        {/* Search */}
                         <input
                             type="text"
                             placeholder="Search applications..."
@@ -293,56 +248,26 @@ export default function Dashboard() {
                             className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
                         />
 
-
-                        {/* Status Filter */}
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
                             className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
                         >
-
-                            <option value="">
-                                All Statuses
-                            </option>
-
-                            <option value="Applied">
-                                Applied
-                            </option>
-
-                            <option value="Interviewing">
-                                Interviewing
-                            </option>
-
-                            <option value="Offer">
-                                Offer
-                            </option>
-
-                            <option value="Rejected">
-                                Rejected
-                            </option>
-
+                            <option value="">All Statuses</option>
+                            <option value="Applied">Applied</option>
+                            <option value="Interviewing">Interviewing</option>
+                            <option value="Offer">Offer</option>
+                            <option value="Rejected">Rejected</option>
                         </select>
 
-
-                        {/* Sort */}
                         <select
                             value={sort}
                             onChange={(e) => setSort(e.target.value)}
                             className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
                         >
-
-                            <option value="">
-                                Sort By
-                            </option>
-
-                            <option value="newest">
-                                Newest First
-                            </option>
-
-                            <option value="oldest">
-                                Oldest First
-                            </option>
-
+                            <option value="">Sort By</option>
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
                         </select>
 
                     </div>
@@ -352,39 +277,13 @@ export default function Dashboard() {
             </div>
 
 
-            {/* =======================
-                FORM MODAL
-            ======================= */}
+            {/* Form Modal */}
+            <div className={`fixed z-50 inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center px-4 transition-all duration-300 ${showModal ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
 
-            <div
-                className={`
-                    fixed z-50 inset-0 bg-black/20 backdrop-blur-sm
-                    flex justify-center items-center px-4
-                    transition-all duration-300
-                    ${showModal
-                        ? "opacity-100"
-                        : "opacity-0 pointer-events-none"
-                    }
-                `}
-            >
-
-                <div
-                    className={`
-                        bg-white rounded-2xl shadow-2xl
-                        w-full max-w-2xl
-                        p-6 md:p-8
-                        transition-all duration-300
-                        max-h-[90vh] overflow-y-auto
-                        ${showModal
-                            ? "opacity-100 scale-100"
-                            : "opacity-0 scale-95"
-                        }
-                    `}
-                >
+                <div className={`bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 md:p-8 transition-all duration-300 max-h-[90vh] overflow-y-auto ${showModal ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}>
 
                     <form onSubmit={handleSubmit}>
 
-                        {/* Modal Header */}
                         <div className="mb-6">
 
                             <p className="text-blue-600 font-semibold text-xs uppercase tracking-widest">
@@ -405,7 +304,6 @@ export default function Dashboard() {
                         </div>
 
 
-                        {/* Inputs */}
                         <div className="space-y-4">
 
                             <div>
@@ -456,27 +354,11 @@ export default function Dashboard() {
                                     onChange={handleChange}
                                     className="border border-gray-200 rounded-xl w-full px-4 py-2.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
                                 >
-
-                                    <option value="">
-                                        Select Status
-                                    </option>
-
-                                    <option value="Applied">
-                                        Applied
-                                    </option>
-
-                                    <option value="Interviewing">
-                                        Interviewing
-                                    </option>
-
-                                    <option value="Offer">
-                                        Offer
-                                    </option>
-
-                                    <option value="Rejected">
-                                        Rejected
-                                    </option>
-
+                                    <option value="">Select Status</option>
+                                    <option value="Applied">Applied</option>
+                                    <option value="Interviewing">Interviewing</option>
+                                    <option value="Offer">Offer</option>
+                                    <option value="Rejected">Rejected</option>
                                 </select>
 
                             </div>
@@ -538,7 +420,6 @@ export default function Dashboard() {
 
 
                             {formData.link && (
-
                                 <div>
 
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -554,13 +435,11 @@ export default function Dashboard() {
                                     />
 
                                 </div>
-
                             )}
 
                         </div>
 
 
-                        {/* Buttons */}
                         <div className="flex gap-3 mt-7">
 
                             <button
@@ -569,7 +448,6 @@ export default function Dashboard() {
                             >
                                 {editId ? "Update Job" : "Add Job"}
                             </button>
-
 
                             <button
                                 type="button"
@@ -588,10 +466,7 @@ export default function Dashboard() {
             </div>
 
 
-            {/* =======================
-                JOB GRID
-            ======================= */}
-
+            {/* Job Grid */}
             <main className="max-w-6xl mx-auto px-4 pb-8">
 
                 {jobs.length > 0 ? (
@@ -605,17 +480,9 @@ export default function Dashboard() {
                                 style={{
                                     animationDelay: `${index * 50}ms`
                                 }}
-                                className="
-                                    bg-white p-5 rounded-2xl
-                                    shadow-md hover:shadow-xl
-                                    hover:-translate-y-1
-                                    transition duration-300
-                                    border border-gray-100
-                                    flex flex-col justify-between
-                                "
+                                className="bg-white p-5 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition duration-300 border border-gray-100 flex flex-col justify-between"
                             >
 
-                                {/* Top */}
                                 <div>
 
                                     <div className="flex justify-between items-start gap-3">
@@ -633,14 +500,7 @@ export default function Dashboard() {
                                         </div>
 
 
-                                        <span
-                                            className={`
-                                                px-3 py-1
-                                                text-xs font-medium
-                                                rounded-full whitespace-nowrap
-                                                ${getStatusColor(job.status)}
-                                            `}
-                                        >
+                                        <span className={`px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap ${getStatusColor(job.status)}`}>
                                             {job.status}
                                         </span>
 
@@ -652,16 +512,18 @@ export default function Dashboard() {
 
                                     <div className="space-y-2 text-sm text-gray-700">
 
-                                        <p>
+                                        <p className="flex items-center gap-1.5">
+                                            <MapPin size={15} className="shrink-0 text-gray-500" />
                                             <span className="font-medium">
-                                                📍 Location:
+                                                Location:
                                             </span>{" "}
                                             {job.location || "Not specified"}
                                         </p>
 
-                                        <p>
+                                        <p className="flex items-center gap-1.5">
+                                            <Banknote size={15} className="shrink-0 text-gray-500" />
                                             <span className="font-medium">
-                                                💰 Salary:
+                                                Salary:
                                             </span>{" "}
                                             {job.salary || "Not specified"}
                                         </p>
@@ -671,7 +533,6 @@ export default function Dashboard() {
                                 </div>
 
 
-                                {/* Actions */}
                                 <div className="flex justify-between items-center gap-2 mt-5">
 
                                     {job.link ? (
@@ -680,9 +541,12 @@ export default function Dashboard() {
                                             href={job.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-sm px-3 py-1.5 border border-blue-200 rounded-lg text-blue-600 hover:bg-blue-50 transition truncate max-w-[120px]"
+                                            className="flex items-center gap-1.5 text-sm px-3 py-1.5 border border-blue-200 rounded-lg text-blue-600 hover:bg-blue-50 transition truncate max-w-[120px]"
                                         >
-                                            🔗 {job.linkTitle || "View Job"}
+                                            <ExternalLink size={15} className="shrink-0" />
+                                            <span className="truncate">
+                                                {job.linkTitle || "View Job"}
+                                            </span>
                                         </a>
 
                                     ) : (
@@ -696,17 +560,18 @@ export default function Dashboard() {
 
                                         <button
                                             onClick={() => handleEdit(job)}
-                                            className="text-sm border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition"
+                                            className="flex items-center gap-1.5 text-sm border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition"
                                         >
-                                            ✏️ Edit
+                                            <Pencil size={15} />
+                                            Edit
                                         </button>
 
-
                                         <button
-                                            className="text-sm border border-red-200 px-3 py-1.5 rounded-lg text-red-600 hover:bg-red-50 transition"
+                                            className="flex items-center gap-1.5 text-sm border border-red-200 px-3 py-1.5 rounded-lg text-red-600 hover:bg-red-50 transition"
                                             onClick={() => handleDelete(job._id)}
                                         >
-                                            🗑 Delete
+                                            <Trash2 size={15} />
+                                            Delete
                                         </button>
 
                                     </div>
@@ -723,8 +588,8 @@ export default function Dashboard() {
 
                     <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-md text-center py-16 px-6">
 
-                        <div className="text-4xl mb-4">
-                            📋
+                        <div className="flex justify-center mb-4">
+                            <ClipboardList size={40} className="text-gray-400" />
                         </div>
 
                         <h2 className="text-xl font-semibold">
@@ -742,18 +607,16 @@ export default function Dashboard() {
             </main>
 
 
-            {/* =======================
-                PAGINATION
-            ======================= */}
-
+            {/* Pagination */}
             <div className="flex justify-center items-center gap-4 pb-28">
 
                 <button
-                    onClick={() => setPage(page - 1)}
+                    onClick={() => setPage((prev) => prev - 1)}
                     disabled={page === 1}
-                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-sm disabled:opacity-40 hover:bg-gray-50 transition"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-sm disabled:opacity-40 hover:bg-gray-50 transition"
                 >
-                    ⬅️ Prev
+                    <ChevronLeft size={18} />
+                    Prev
                 </button>
 
 
@@ -763,40 +626,25 @@ export default function Dashboard() {
 
 
                 <button
-                    onClick={() => setPage(page + 1)}
+                    onClick={() => setPage((prev) => prev + 1)}
                     disabled={page === totalPages}
-                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-sm disabled:opacity-40 hover:bg-gray-50 transition"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-sm disabled:opacity-40 hover:bg-gray-50 transition"
                 >
-                    Next ➡️
+                    Next
+                    <ChevronRight size={18} />
                 </button>
 
             </div>
 
 
-            {/* =======================
-                FLOATING ACTION BUTTON
-            ======================= */}
-
+            {/* Floating Action Button */}
             <abbr title="Click to Add Job">
 
                 <button
                     onClick={() => setShowModal((prev) => !prev)}
-                    className="
-                        fixed bottom-8 right-8
-                        bg-blue-600 hover:bg-blue-700
-                        text-white
-                        w-16 h-16
-                        rounded-full
-                        shadow-lg hover:shadow-xl
-                        flex items-center justify-center
-                        transition duration-300
-                        hover:scale-105
-                        z-40
-                    "
+                    className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white w-16 h-16 rounded-full shadow-lg hover:shadow-xl flex items-center justify-center transition duration-300 hover:scale-105 z-40"
                 >
-
                     <FilePlusCorner size={30} />
-
                 </button>
 
             </abbr>

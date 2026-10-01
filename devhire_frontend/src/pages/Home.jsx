@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Home() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-900">
@@ -33,21 +35,22 @@ export default function Home() {
                         {/* Buttons */}
                         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
 
-                            <a
-                                href="/register"
+                            <Link
+                                to="/register"
                                 className="px-6 py-3 rounded-xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg transition"
                             >
                                 Get Started
-                            </a>
+                            </Link>
 
-                            <a
-                                href="/help"
+                            <Link
+                                to="/help"
                                 className="px-6 py-3 rounded-xl bg-white/80 border border-gray-200 text-gray-700 font-medium shadow-sm hover:bg-white hover:shadow-md transition"
                             >
                                 Learn More
-                            </a>
+                            </Link>
 
                         </div>
+
                     </div>
 
 
@@ -60,6 +63,7 @@ export default function Home() {
                             <div className="flex justify-between items-start">
 
                                 <div>
+
                                     <h2 className="text-lg font-semibold text-gray-900">
                                         Frontend Developer
                                     </h2>
@@ -67,6 +71,7 @@ export default function Home() {
                                     <p className="text-gray-500 text-sm">
                                         Google
                                     </p>
+
                                 </div>
 
                                 <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-600">
@@ -78,6 +83,7 @@ export default function Home() {
                             <div className="border-t my-4"></div>
 
                             <div className="space-y-1 text-sm text-gray-700">
+
                                 <p>
                                     <span className="font-medium">📍 Location:</span>{" "}
                                     Bangalore
@@ -87,6 +93,7 @@ export default function Home() {
                                     <span className="font-medium">💰 Salary:</span>{" "}
                                     ₹12 LPA
                                 </p>
+
                             </div>
 
                             <div className="flex justify-between items-center mt-4">
@@ -100,6 +107,7 @@ export default function Home() {
                                 </span>
 
                             </div>
+
                         </div>
 
 
@@ -109,6 +117,7 @@ export default function Home() {
                             <div className="flex justify-between items-start">
 
                                 <div>
+
                                     <h2 className="text-lg font-semibold text-gray-900">
                                         Backend Developer
                                     </h2>
@@ -116,6 +125,7 @@ export default function Home() {
                                     <p className="text-gray-500 text-sm">
                                         Microsoft
                                     </p>
+
                                 </div>
 
                                 <span className="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-600">
@@ -127,6 +137,7 @@ export default function Home() {
                             <div className="border-t my-4"></div>
 
                             <div className="space-y-1 text-sm text-gray-700">
+
                                 <p>
                                     <span className="font-medium">📍 Location:</span>{" "}
                                     Hyderabad
@@ -136,6 +147,7 @@ export default function Home() {
                                     <span className="font-medium">💰 Salary:</span>{" "}
                                     ₹15 LPA
                                 </p>
+
                             </div>
 
                             <div className="flex justify-between items-center mt-4">
@@ -149,6 +161,7 @@ export default function Home() {
                                 </span>
 
                             </div>
+
                         </div>
 
 
@@ -158,6 +171,7 @@ export default function Home() {
                             <div className="flex justify-between items-start">
 
                                 <div>
+
                                     <h2 className="text-lg font-semibold text-gray-900">
                                         Full Stack Developer
                                     </h2>
@@ -165,6 +179,7 @@ export default function Home() {
                                     <p className="text-gray-500 text-sm">
                                         TechNova
                                     </p>
+
                                 </div>
 
                                 <span className="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-600">
@@ -176,6 +191,7 @@ export default function Home() {
                             <div className="border-t my-4"></div>
 
                             <div className="space-y-1 text-sm text-gray-700">
+
                                 <p>
                                     <span className="font-medium">📍 Location:</span>{" "}
                                     Mumbai
@@ -185,6 +201,7 @@ export default function Home() {
                                     <span className="font-medium">💰 Salary:</span>{" "}
                                     ₹10 LPA
                                 </p>
+
                             </div>
 
                             <div className="flex justify-between items-center mt-4">
@@ -198,11 +215,13 @@ export default function Home() {
                                 </span>
 
                             </div>
+
                         </div>
 
                     </div>
 
                 </div>
+
             </section>
 
 
@@ -291,6 +310,7 @@ export default function Home() {
                     </div>
 
                 </div>
+
             </section>
 
 
@@ -373,6 +393,7 @@ export default function Home() {
                     </div>
 
                 </div>
+
             </section>
 
 
@@ -405,39 +426,51 @@ export default function Home() {
                     <div className="grid grid-cols-2 gap-4">
 
                         <div className="bg-blue-100 text-blue-700 rounded-2xl p-6">
+
                             <p className="font-semibold">
                                 Applied
                             </p>
+
                             <p className="text-sm mt-1 opacity-80">
                                 Application submitted
                             </p>
+
                         </div>
 
                         <div className="bg-yellow-100 text-yellow-700 rounded-2xl p-6">
+
                             <p className="font-semibold">
                                 Interviewing
                             </p>
+
                             <p className="text-sm mt-1 opacity-80">
                                 Moving forward
                             </p>
+
                         </div>
 
                         <div className="bg-green-100 text-green-700 rounded-2xl p-6">
+
                             <p className="font-semibold">
                                 Offer
                             </p>
+
                             <p className="text-sm mt-1 opacity-80">
                                 Good news!
                             </p>
+
                         </div>
 
                         <div className="bg-red-100 text-red-700 rounded-2xl p-6">
+
                             <p className="font-semibold">
                                 Rejected
                             </p>
+
                             <p className="text-sm mt-1 opacity-80">
                                 Time to move on
                             </p>
+
                         </div>
 
                     </div>
@@ -461,12 +494,12 @@ export default function Home() {
                         clearer view of your progress.
                     </p>
 
-                    <a
-                        href="/register"
+                    <Link
+                        to="/register"
                         className="inline-block mt-8 px-7 py-3 rounded-xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg transition"
                     >
                         Get Started
-                    </a>
+                    </Link>
 
                 </div>
 
@@ -484,26 +517,26 @@ export default function Home() {
 
                     <div className="flex gap-6 text-sm text-gray-500">
 
-                        <a
-                            href="/help"
+                        <Link
+                            to="/help"
                             className="hover:text-blue-600 transition"
                         >
                             Help
-                        </a>
+                        </Link>
 
-                        <a
-                            href="/login"
+                        <Link
+                            to="/login"
                             className="hover:text-blue-600 transition"
                         >
                             Login
-                        </a>
+                        </Link>
 
-                        <a
-                            href="/register"
+                        <Link
+                            to="/register"
                             className="hover:text-blue-600 transition"
                         >
                             Register
-                        </a>
+                        </Link>
 
                     </div>
 

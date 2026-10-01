@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Menu, X } from "lucide-react";
 
 function Navbar({ isLoggedIn, setIsLoggedIn }) {
 
@@ -10,9 +10,9 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
     const handleLogout = () => {
         localStorage.removeItem("token");
         setIsLoggedIn(false);
+        setShowMenu(false);
     };
 
-    // Close dropdown when another navbar link is clicked.
     const closeMenu = () => {
         setShowMenu(false);
     };
@@ -20,129 +20,227 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
     return (
         <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
 
-                {/* Logo */}
-                <Link
-                    to="/"
-                    onClick={closeMenu}
-                    className="flex items-center gap-2 group"
-                >
-                    <span className="text-2xl font-bold tracking-tight text-blue-600 group-hover:text-blue-700 transition">
-                        DevHire
-                    </span>
-                </Link>
+                <div className="flex justify-between items-center">
 
-
-                {/* Navigation */}
-                <div className="flex items-center gap-2 sm:gap-6">
-
-                    {/* Home */}
+                    {/* Logo */}
                     <Link
                         to="/"
                         onClick={closeMenu}
-                        className="px-3 py-2 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+                        className="flex items-center gap-2 group"
                     >
-                        Home
+                        <span className="text-2xl font-bold tracking-tight text-blue-600 group-hover:text-blue-700 transition">
+                            DevHire
+                        </span>
                     </Link>
 
 
-                    {/* Dashboard */}
-                    {isLoggedIn && (
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex items-center gap-2 sm:gap-6">
+
+                        {/* Home */}
                         <Link
-                            to="/dashboard"
+                            to="/"
                             onClick={closeMenu}
                             className="px-3 py-2 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
                         >
-                            Dashboard
+                            Home
                         </Link>
-                    )}
 
 
-                    {/* About */}
-                    <Link
-                        to="/about"
-                        onClick={closeMenu}
-                        className="px-3 py-2 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
-                    >
-                        About
-                    </Link>
+                        {/* Dashboard */}
+                        {isLoggedIn && (
+                            <Link
+                                to="/dashboard"
+                                onClick={closeMenu}
+                                className="px-3 py-2 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+                            >
+                                Dashboard
+                            </Link>
+                        )}
 
 
-                    {/* Help */}
-                    <Link
-                        to="/help"
-                        onClick={closeMenu}
-                        className="px-3 py-2 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
-                    >
-                        Help
-                    </Link>
-
-
-                    {/* Logged Out */}
-                    {!isLoggedIn ? (
-
+                        {/* About */}
                         <Link
-                            to="/login"
+                            to="/about"
                             onClick={closeMenu}
-                            className="ml-1 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 hover:shadow-md transition"
+                            className="px-3 py-2 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
                         >
-                            Login / Register
+                            About
                         </Link>
 
-                    ) : (
 
-                        /* Logged In User Menu */
-                        <div className="relative ml-1">
+                        {/* Help */}
+                        <Link
+                            to="/help"
+                            onClick={closeMenu}
+                            className="px-3 py-2 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+                        >
+                            Help
+                        </Link>
 
-                            <button
-                                onClick={() => setShowMenu((prev) => !prev)}
-                                className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm hover:bg-blue-700 hover:shadow-md hover:scale-105 transition"
+
+                        {/* Logged Out */}
+                        {!isLoggedIn ? (
+
+                            <Link
+                                to="/login"
+                                onClick={closeMenu}
+                                className="ml-1 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-medium shadow-sm hover:bg-blue-700 hover:shadow-md transition"
                             >
-                                <User size={19} />
-                            </button>
+                                Login / Register
+                            </Link>
 
+                        ) : (
 
-                            {/* Dropdown */}
-                            <div
-                                className={`absolute right-0 mt-3 w-44 bg-white border border-gray-100 shadow-xl rounded-xl p-2 transition-all duration-200 origin-top-right ${
-                                    showMenu
-                                        ? "opacity-100 scale-100"
-                                        : "opacity-0 scale-95 pointer-events-none"
-                                }`}
-                            >
+                            /* Logged In User Menu */
+                            <div className="relative ml-1">
 
-                                {/* Profile */}
-                                <Link
-                                    to="/profile"
-                                    onClick={closeMenu}
-                                    className="flex justify-between items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition"
-                                >
-                                    <span>Profile</span>
-                                    <User size={17} />
-                                </Link>
-
-
-                                <div className="my-1 border-t border-gray-100"></div>
-
-
-                                {/* Logout */}
                                 <button
-                                    onClick={() => {
-                                        handleLogout();
-                                        closeMenu();
-                                    }}
-                                    className="w-full flex justify-between items-center px-3 py-2.5 text-sm font-medium text-red-500 rounded-lg hover:bg-red-50 transition"
+                                    onClick={() => setShowMenu((prev) => !prev)}
+                                    className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm hover:bg-blue-700 hover:shadow-md hover:scale-105 transition"
                                 >
-                                    <span>Logout</span>
-                                    <LogOut size={17} />
+                                    <User size={19} />
                                 </button>
+
+
+                                {/* User Dropdown */}
+                                <div
+                                    className={`absolute right-0 mt-3 w-44 bg-white border border-gray-100 shadow-xl rounded-xl p-2 transition-all duration-200 origin-top-right ${
+                                        showMenu
+                                            ? "opacity-100 scale-100"
+                                            : "opacity-0 scale-95 pointer-events-none"
+                                    }`}
+                                >
+
+                                    {/* Profile */}
+                                    <Link
+                                        to="/profile"
+                                        onClick={closeMenu}
+                                        className="flex justify-between items-center px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition"
+                                    >
+                                        <span>Profile</span>
+                                        <User size={17} />
+                                    </Link>
+
+
+                                    <div className="my-1 border-t border-gray-100"></div>
+
+
+                                    {/* Logout */}
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full flex justify-between items-center px-3 py-2.5 text-sm font-medium text-red-500 rounded-lg hover:bg-red-50 transition"
+                                    >
+                                        <span>Logout</span>
+                                        <LogOut size={17} />
+                                    </button>
+
+                                </div>
 
                             </div>
 
-                        </div>
+                        )}
 
-                    )}
+                    </div>
+
+
+                    {/* Mobile Menu Button */}
+                    <button
+                        onClick={() => setShowMenu((prev) => !prev)}
+                        className="md:hidden w-10 h-10 rounded-lg flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+                        aria-label="Toggle navigation menu"
+                    >
+                        {showMenu ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+
+                </div>
+
+
+                {/* Mobile Navigation */}
+                <div
+                    className={`md:hidden overflow-hidden transition-all duration-200 ${
+                        showMenu
+                            ? "max-h-96 opacity-100 mt-3"
+                            : "max-h-0 opacity-0"
+                    }`}
+                >
+
+                    <div className="border-t border-gray-100 pt-3 pb-1 space-y-1">
+
+                        <Link
+                            to="/"
+                            onClick={closeMenu}
+                            className="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+                        >
+                            Home
+                        </Link>
+
+
+                        {isLoggedIn && (
+                            <Link
+                                to="/dashboard"
+                                onClick={closeMenu}
+                                className="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+                            >
+                                Dashboard
+                            </Link>
+                        )}
+
+
+                        <Link
+                            to="/about"
+                            onClick={closeMenu}
+                            className="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+                        >
+                            About
+                        </Link>
+
+
+                        <Link
+                            to="/help"
+                            onClick={closeMenu}
+                            className="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+                        >
+                            Help
+                        </Link>
+
+
+                        {!isLoggedIn ? (
+
+                            <Link
+                                to="/login"
+                                onClick={closeMenu}
+                                className="block mt-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium text-center shadow-sm hover:bg-blue-700 transition"
+                            >
+                                Login / Register
+                            </Link>
+
+                        ) : (
+
+                            <>
+                                <Link
+                                    to="/profile"
+                                    onClick={closeMenu}
+                                    className="flex justify-between items-center px-3 py-2.5 rounded-lg text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition"
+                                >
+                                    <span>Profile</span>
+                                    <User size={18} />
+                                </Link>
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full flex justify-between items-center px-3 py-2.5 rounded-lg text-base font-medium text-red-500 hover:bg-red-50 transition"
+                                >
+                                    <span>Logout</span>
+                                    <LogOut size={18} />
+                                </button>
+                            </>
+
+                        )}
+
+                    </div>
 
                 </div>
 

@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
@@ -6,30 +7,24 @@ const {
     getJobs,
     getJobById,
     updateJob,
-    deleteJob,
-    add_multiple_jobs
+    deleteJob
 } = require("../controllers/jobController");
 
 const protect = require("../middleware/authMiddleware");
 
-// create job route
-// router.post("/jobs", protect, createJob);
+// Create job
 router.post("/jobs", protect, createJob);
 
-// read all jobs route
-// router.get("/jobs",protect, getJobs);
+// Read all jobs
 router.get("/jobs", protect, getJobs);
 
-// read one job route
-// router.get("/jobs/:id", protect, getJobById);
+// Read one job
 router.get("/jobs/:id", protect, getJobById);
 
-// update job by id route
-// router.put("/jobs/:id", protect, updateJob);
+// Update job
 router.put("/jobs/:id", protect, updateJob);
 
-// delete job by id route
-// router.delete("/jobs/:id", protect, deleteJob);
+// Delete job
 router.delete("/jobs/:id", protect, deleteJob);
 
 module.exports = router;

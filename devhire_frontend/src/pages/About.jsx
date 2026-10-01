@@ -1,12 +1,12 @@
+import { Link } from "react-router-dom";
+
 export default function About() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-900">
 
             {/* Background glows */}
             <div className="fixed w-[500px] h-[500px] bg-blue-300/20 rounded-full blur-3xl -top-40 -left-40 pointer-events-none"></div>
-
             <div className="fixed w-[500px] h-[500px] bg-purple-300/20 rounded-full blur-3xl top-1/3 -right-40 pointer-events-none"></div>
-
             <div className="fixed w-[450px] h-[450px] bg-pink-200/20 rounded-full blur-3xl bottom-0 left-1/3 pointer-events-none"></div>
 
 
@@ -377,12 +377,12 @@ export default function About() {
                         search organised with DevHire.
                     </p>
 
-                    <a
-                        href="/register"
+                    <Link
+                        to="/register"
                         className="inline-block mt-8 px-7 py-3 rounded-xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg transition"
                     >
                         Get Started
-                    </a>
+                    </Link>
 
                 </div>
 
@@ -400,26 +400,26 @@ export default function About() {
 
                     <div className="flex gap-6 text-sm text-gray-500">
 
-                        <a
-                            href="/"
+                        <Link
+                            to="/"
                             className="hover:text-blue-600 transition"
                         >
                             Home
-                        </a>
+                        </Link>
 
-                        <a
-                            href="/help"
+                        <Link
+                            to="/help"
                             className="hover:text-blue-600 transition"
                         >
                             Help
-                        </a>
+                        </Link>
 
-                        <a
-                            href="/login"
+                        <Link
+                            to="/login"
                             className="hover:text-blue-600 transition"
                         >
                             Login
-                        </a>
+                        </Link>
 
                     </div>
 

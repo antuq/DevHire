@@ -13,10 +13,7 @@ export default function Profile() {
     const [confirmPassword, setConfirmPassword] = useState("");
 
 
-    // =======================
-    // UPDATE PROFILE
-    // =======================
-
+    // Update profile
     const handleUserProfile = async () => {
 
         try {
@@ -40,10 +37,7 @@ export default function Profile() {
     };
 
 
-    // =======================
-    // UPDATE PASSWORD
-    // =======================
-
+    // Update password
     const handleUserPassword = async () => {
 
         if (password !== confirmPassword) {
@@ -81,10 +75,7 @@ export default function Profile() {
     };
 
 
-    // =======================
-    // GET PROFILE
-    // =======================
-
+    // Get profile
     useEffect(() => {
 
         const getProfile = async () => {
@@ -111,10 +102,6 @@ export default function Profile() {
 
     }, []);
 
-
-    // =======================
-    // UI
-    // =======================
 
     return (
 
@@ -328,5 +315,4 @@ export default function Profile() {
         </div>
 
     );
-
 }

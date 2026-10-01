@@ -1,14 +1,16 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
-function Layout({children, isLoggedIn, setIsLoggedIn}){
+
+function Layout({ isLoggedIn, setIsLoggedIn }) {
     return (
         <>
-            <Navbar 
-                isLoggedIn={isLoggedIn} 
-                setIsLoggedIn={setIsLoggedIn}/>
-            <Outlet/>
+            <Navbar
+                isLoggedIn={isLoggedIn}
+                setIsLoggedIn={setIsLoggedIn}
+            />
+            <Outlet />
         </>
-    )
+    );
 }
 
 export default Layout;

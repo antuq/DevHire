@@ -1,59 +1,65 @@
 const mongoose = require("mongoose");
 
 const jobSchema = new mongoose.Schema({
-    company:{
+    company: {
         type: String,
         required: true,
         trim: true,
         minLength: 3
     },
-    role:{
+
+    role: {
         type: String,
         required: true,
         trim: true,
         minLength: 3
     },
-    linkTitle:{
+
+    linkTitle: {
         type: String,
         trim: true
     },
-    link:{
+
+    link: {
         type: String,
         trim: true,
         default: ""
     },
-    status:{
+
+    status: {
         type: String,
-        enum: ["Applied","Offer","Interviewing","Rejected"],
+        enum: ["Applied", "Offer", "Interviewing", "Rejected"],
         default: "Applied"
     },
-    salary:{
-        type: String,
-        trim: true,
-        default:""
-    },
-    location:{
+
+    salary: {
         type: String,
         trim: true,
         default: ""
     },
-    notes:{
+
+    location: {
         type: String,
         trim: true,
         default: ""
     },
-    // Phase 9: updated Job schema to add foreign reference to User schema
+
+    notes: {
+        type: String,
+        trim: true,
+        default: ""
+    },
+
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
-    }
-    ,
-    createdAt:{
+    },
+
+    createdAt: {
         type: Date,
         default: Date.now
-    },
+    }
 });
 
-
-module.exports = mongoose.model("Job",jobSchema);
+module.exports = mongoose.model("Job", jobSchema);
