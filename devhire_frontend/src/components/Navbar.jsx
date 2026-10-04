@@ -30,8 +30,8 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
                         onClick={closeMenu}
                         className="flex items-center gap-2 group"
                     >
-                        <span className="text-2xl font-bold tracking-tight text-blue-600 group-hover:text-blue-700 transition">
-                            DevHire
+                        <span className="text-xl font-bold">
+                            &lt;/Dev<span className="text-indigo-500">Hire</span>&gt;
                         </span>
                     </Link>
 
@@ -107,11 +107,10 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
 
                                 {/* User Dropdown */}
                                 <div
-                                    className={`absolute right-0 mt-3 w-44 bg-white border border-gray-100 shadow-xl rounded-xl p-2 transition-all duration-200 origin-top-right ${
-                                        showMenu
-                                            ? "opacity-100 scale-100"
-                                            : "opacity-0 scale-95 pointer-events-none"
-                                    }`}
+                                    className={`absolute right-0 mt-3 w-44 bg-white border border-gray-100 shadow-xl rounded-xl p-2 transition-all duration-200 origin-top-right ${showMenu
+                                        ? "opacity-100 scale-100"
+                                        : "opacity-0 scale-95 pointer-events-none"
+                                        }`}
                                 >
 
                                     {/* Profile */}
@@ -160,11 +159,10 @@ function Navbar({ isLoggedIn, setIsLoggedIn }) {
 
                 {/* Mobile Navigation */}
                 <div
-                    className={`md:hidden overflow-hidden transition-all duration-200 ${
-                        showMenu
-                            ? "max-h-96 opacity-100 mt-3"
-                            : "max-h-0 opacity-0"
-                    }`}
+                    className={`md:hidden overflow-hidden transition-all duration-200 ${showMenu
+                        ? "max-h-96 opacity-100 mt-3"
+                        : "max-h-0 opacity-0"
+                        }`}
                 >
 
                     <div className="border-t border-gray-100 pt-3 pb-1 space-y-1">
