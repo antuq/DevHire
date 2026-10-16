@@ -13,6 +13,9 @@ export default function Login({ setIsLoggedIn }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    // Handle delayed sign in.
+    const [isLoading, setIsLoading] = useState(false);
+
     // Navigation
     const navigation = useNavigate();
 
@@ -20,7 +23,20 @@ export default function Login({ setIsLoggedIn }) {
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        if(isLoading) return;
+
+        setIsLoading(true);
+
+        let delayToastTimer;
+
         try {
+            delayToastTimer = setTimeout(()=>{
+                toast(
+                    "The server may take a few minutes to wake up. Thanks for your patience.",
+                    {id: "login-delay"}
+                );
+            }, 1200);
+
             const res = await API.post("/auth/login", {
                 email,
                 password
@@ -30,15 +46,20 @@ export default function Login({ setIsLoggedIn }) {
             localStorage.setItem("token", res.data.token);
 
             setIsLoggedIn(true);
+            toast.dismiss("login-delay");
             toast.success("Login successful!");
 
             // Navigate to dashboard
             navigation("/dashboard");
 
         } catch (err) {
+            toast.dismiss("login-delay");
             toast.error(
                 err.response?.data?.message || "Unable to login."
             );
+        } finally {
+            clearTimeout(delayToastTimer);
+            setIsLoading(false);
         }
     };
 
@@ -88,8 +109,17 @@ export default function Login({ setIsLoggedIn }) {
                         onChange={(e) => setPassword(e.target.value)}
                     />
 
-                    <button className="bg-blue-500 text-white w-full p-2 rounded">
-                        Login
+                    <button className="bg-blue-500 text-white w-full p-2 rounded"
+                            type="submit"
+                            disabled={isLoading}
+                    >
+                        {/* to handle sign in delay */}
+                        {isLoading ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"/>
+                                Signing in..
+                            </span>
+                        ) : ("Login")}
                     </button>
 
                     <p className="text-center mt-4 whitespace-nowrap">
