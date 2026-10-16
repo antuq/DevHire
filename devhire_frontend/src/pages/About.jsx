@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function About() {
+export default function About({isLoggedIn}) {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-900">
 
@@ -378,10 +378,10 @@ export default function About() {
                     </p>
 
                     <Link
-                        to="/register"
+                        to={isLoggedIn ? "/dashboard" : "/register"}
                         className="inline-block mt-8 px-7 py-3 rounded-xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg transition"
                     >
-                        Get Started
+                        {isLoggedIn ? "Go to Dashboard" : "Get Started"}
                     </Link>
 
                 </div>

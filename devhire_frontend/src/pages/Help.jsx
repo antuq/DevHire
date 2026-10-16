@@ -1,4 +1,5 @@
-export default function Help() {
+import { Link } from "react-router-dom";
+export default function Help({isLoggedIn}) {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-gray-900">
 
@@ -475,16 +476,18 @@ export default function Help() {
                     </h2>
 
                     <p className="mt-4 text-gray-600 max-w-xl mx-auto">
-                        Head over to your dashboard and start keeping track
-                        of your job applications.
+                        {isLoggedIn
+                            ? "Head over to your dashboard and start keeping track of your job applications."
+                            : "Create your account and start keeping track of your job applications."
+                        }
                     </p>
 
-                    <a
-                        href="/dashboard"
+                    <Link
+                        to={isLoggedIn ? "/dashboard" : "/register"}
                         className="inline-block mt-8 px-7 py-3 rounded-xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg transition"
                     >
-                        Go to Dashboard
-                    </a>
+                        {isLoggedIn ? "Go to Dashboard" : "Get Started"}
+                    </Link>
 
                 </div>
 

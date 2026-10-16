@@ -38,7 +38,7 @@ function App() {
                         />
                     }
                 >
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
 
                     <Route
                         path="/dashboard"
@@ -58,8 +58,8 @@ function App() {
                         }
                     />
 
-                    <Route path="/about" element={<About />} />
-                    <Route path="/help" element={<Help />} />
+                    <Route path="/about" element={<About isLoggedIn={isLoggedIn} />} />
+                    <Route path="/help" element={<Help isLoggedIn={isLoggedIn} />} />
 
                 </Route>
 
