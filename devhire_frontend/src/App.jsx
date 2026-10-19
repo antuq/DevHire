@@ -14,21 +14,34 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import GuestRoutes from "./components/GuestRoutes";
 
 function App() {
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
+        // read current login state when app mounts.
         const token = localStorage.getItem("token");
         setIsLoggedIn(!!token);
+
+        // listen for state changes in other tabs
+        const handleStorageChange = (event) => {
+            if (event.key == "token") {
+                setIsLoggedIn(!!event.newValue);
+            }
+        };
+        window.addEventListener("storage", handleStorageChange);
+
+        // clean up
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+        };
     }, []);
 
     return (
         <Router>
-
             <Routes>
-
                 {/* Pages with Navbar */}
                 <Route
                     element={
@@ -43,7 +56,7 @@ function App() {
                     <Route
                         path="/dashboard"
                         element={
-                            <ProtectedRoutes>
+                            <ProtectedRoutes isLoggedIn={isLoggedIn}>
                                 <Dashboard />
                             </ProtectedRoutes>
                         }
@@ -52,7 +65,7 @@ function App() {
                     <Route
                         path="/profile"
                         element={
-                            <ProtectedRoutes>
+                            <ProtectedRoutes isLoggedIn={isLoggedIn}>
                                 <Profile />
                             </ProtectedRoutes>
                         }
@@ -65,16 +78,23 @@ function App() {
 
 
                 {/* Authentication pages without Navbar */}
+
                 <Route
                     path="/login"
                     element={
-                        <Login setIsLoggedIn={setIsLoggedIn} />
+                        <GuestRoutes isLoggedIn={isLoggedIn}>
+                            <Login setIsLoggedIn={setIsLoggedIn} />
+                        </GuestRoutes>
                     }
                 />
 
                 <Route
                     path="/register"
-                    element={<Register />}
+                    element={
+                        <GuestRoutes isLoggedIn={isLoggedIn}>
+                            <Register />
+                        </GuestRoutes>
+                    }
                 />
 
             </Routes>
